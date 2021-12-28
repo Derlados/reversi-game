@@ -40,8 +40,7 @@ export default class GameController {
     private connectNewuser(socket: Socket) {
         const roomId = this.findEmptyRoomId();
         if (!roomId) {
-            const newRoomId = crypto.createHash('sha256').update(socket.id).digest('hex');
-            this.gameRooms.set(newRoomId, new GameRoom(newRoomId, socket, (roomId) => { this.clearRoom(roomId) }));
+            this.crateRoom(socket);
         } else {
             const room = this.gameRooms.get(roomId);
             room.addSecondPlayer(socket);
@@ -71,12 +70,9 @@ export default class GameController {
         this.gameRooms.delete(roomId);
     }
 
-    private crateRoom() {
-
-    }
-
-    private nextTurn() {
-
+    private crateRoom(socket: Socket) {
+        const newRoomId = crypto.createHash('sha256').update(socket.id).digest('hex');
+        this.gameRooms.set(newRoomId, new GameRoom(newRoomId, socket, (roomId) => { this.clearRoom(roomId) }));
     }
 }
 

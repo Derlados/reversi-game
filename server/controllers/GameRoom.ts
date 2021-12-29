@@ -59,8 +59,8 @@ export class GameRoom {
     }
 
     public startGame(roomId: string) {
-        this.initPlayerSocket(this.player1, this.player2);
-        this.initPlayerSocket(this.player2, this.player1);
+        this.initPlayerSocket(this.player1);
+        this.initPlayerSocket(this.player2);
         this.player1.socket.emit('start', { description: `game started, id: ${roomId}`, roomId: roomId });
         this.player2.socket.emit('start', { description: `game started, id: ${roomId}`, roomId: roomId });
 

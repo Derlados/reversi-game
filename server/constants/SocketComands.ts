@@ -5,6 +5,7 @@ enum SocketComands {
     GIVE_UP = 'give_up',
     ERROR_CONNECTION = 'error_connection',
     END_GAME = 'end_game',
+    END_GAME_DISCONNECT = 'end_game_disconnect',
     NEXT_TURN = 'next_turn'
 }
 

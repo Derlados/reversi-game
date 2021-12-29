@@ -1,4 +1,5 @@
 import { Socket } from "socket.io";
+import GameResult from "../constants/GameResult";
 import SocketComands from "../constants/SocketComands";
 import Player from "../types/Player";
 
@@ -15,7 +16,7 @@ import Player from "../types/Player";
       чьих фишек на доске выставлено больше, объявляется победителем. В случае равенства количества фишек засчитывается ничья.
  */
 export class GameRoom {
-    private static BASIC_SIZE_FIELD = 4;
+    private static BASIC_SIZE_FIELD = 6;
 
     private EMPTY = 0;
     private FIRST_PLAYER = 1;
@@ -66,32 +67,61 @@ export class GameRoom {
         this.gameAnalyze();
     }
 
-    //TODO
+    /**
+     * Обработка окончания игры
+     * @param additionalDesc - опциональный параметр, в котором коротко описана причина окончания игры
+     */
     public endGame(additionalDesc?: string) {
-        if (this.player1.countCheckers > this.player2.countCheckers) {
-            // player1 выиграл 
-        } else if (this.player1.countCheckers < this.player2.countCheckers) {
-            // player2 выиграл 
-        } else {
-            // ничья
+        this.calculateCheckers();
+
+        let countCheckersP1 = 0;
+        let countCheckersP2 = 0;
+        countCheckersP1 = countCheckersP1 = this.player1.countCheckers;
+        countCheckersP2 = countCheckersP2 = this.player2.countCheckers;
+
+        const lastGameState = {
+            field: this.field,
+            countCheckersP1: countCheckersP1,
+            countCheckersP2: countCheckersP2,
+            additionalDesc: additionalDesc
         }
 
+        if (this.player1.countCheckers > this.player2.countCheckers) {
+            this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.VICTORY, lastGameState: lastGameState });
+            this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.LOSE, lastGameState: lastGameState });
+        } else if (this.player1.countCheckers < this.player2.countCheckers) {
+            this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.LOSE, lastGameState: lastGameState });
+            this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.VICTORY, lastGameState: lastGameState });
+        } else {
+            this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.DRAW, lastGameState: lastGameState });
+            this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.DRAW, lastGameState: lastGameState });
+        }
+
+        this.player1.socket.removeAllListeners(SocketComands.DISCONNECT);
+        this.player2.socket.removeAllListeners(SocketComands.DISCONNECT);
         this.player1.socket.disconnect();
         this.player2.socket.disconnect();
         this.deleteRoom(this.roomId);
     }
 
-    //TODO
-    public endGameDisconnect(disconnectedUser: Socket) {
-        if (this.player1.socket.id == disconnectedUser.id) {
-            this.endGame(`game ended opponent disconnect`);
-        } else {
-            this.endGame(`game ended opponent disconnect`);
-        }
+    //TODO по хорошему нужно доделать подключение к существующей игре (в течении минуты)
+    /**
+     * Окончание игры по причине дисконекта одно из пользователей
+     * @param disconnectedPlayerId 
+     */
+    private endGameDisconnect(disconnectedPlayerId: string) {
+        const connectedPlayer = disconnectedPlayerId == this.player1.socket.id ? this.player2 : this.player1;
+        connectedPlayer.socket.emit(SocketComands.END_GAME_DISCONNECT, { desc: 'oponnent disconnected' });
+        connectedPlayer.socket.removeAllListeners(SocketComands.DISCONNECT);
+        connectedPlayer.socket.disconnect();
+        this.deleteRoom(this.roomId);
     }
 
-    //TODO
-    private initPlayerSocket(player: Player, opponent: Player) {
+    /**
+     * Инициализация слушателей сокета игрока
+     * @param player - игрок для которого настраивается сокет
+     */
+    private initPlayerSocket(player: Player) {
         player.socket.on(SocketComands.GAME_TURN, (data: GameRoom.Coord) => {
             // Проверка на случай если придет ложный запрос о ходе не того игрока
             if (this.currentUserId == player.socket.id) {
@@ -103,11 +133,10 @@ export class GameRoom {
             this.player2.socket.emit('message', { data: this.player1.socket.id })
         });
         player.socket.on(SocketComands.GIVE_UP, () => {
-
+            this.endGame(`game ended - opponent gave up`);
         });
         player.socket.on(SocketComands.DISCONNECT, () => {
-            opponent.socket.removeAllListeners(SocketComands.DISCONNECT); // Удаляется дисконект, 
-            this.endGameDisconnect(player.socket);
+            this.endGameDisconnect(player.socket.id);
         });
     }
 
@@ -155,7 +184,6 @@ export class GameRoom {
             --rightDiagCoord.y;
         }
 
-        this.calculateCheckers();
         this.gameAnalyze();
     }
 
@@ -163,7 +191,18 @@ export class GameRoom {
      * Подсчет фишек для каждого игрока
      */
     private calculateCheckers() {
+        this.player1.countCheckers = 0;
+        this.player2.countCheckers = 0;
 
+        for (let i = 0; i < this.field.length; ++i) {
+            for (let j = 0; j < this.field.length; ++j) {
+                if (this.field[i][j] == this.FIRST_PLAYER) {
+                    ++this.player1.countCheckers;
+                } else if (this.field[i][j] == this.SECOND_PLAYER) {
+                    ++this.player2.countCheckers;
+                }
+            }
+        }
     }
 
     /**
@@ -211,9 +250,10 @@ export class GameRoom {
         }
     }
 
-    //TODO
+    //TODO ОПТИМИЗАЦИЯ. Лучше изначально проверить может ли ходить опонент - если нет, то потом проверить сможет ли текущий игрок походить еще раз
     /**
      * Анализ текущего состояния игры - поиск доступных ходов для каждого игрока и решение кому передать ход (по правилам), если ходов нет - игра окончена 
+     *
      */
     private gameAnalyze() {
         this.player1.field = this.field.map(arr => arr.slice());
@@ -237,21 +277,37 @@ export class GameRoom {
             this.currentUserId = this.player1.socket.id;
         }
 
-        //TODO Отправка информации о передачи хода
         this.sendGameState();
     }
 
-    //TODO Отправка информации об игре, после хода - информация о передаче хода, 
+    /**
+     * Отправка информации об игре, после хода - информация о передаче хода, 
+     */
     private sendGameState() {
-        this.player1.socket.emit('field', this.player1.field);
-        this.player2.socket.emit('field', this.player2.field);
+        const dataP1: GameRoom.UserGameState = new GameRoom.UserGameState();
+        const dataP2: GameRoom.UserGameState = new GameRoom.UserGameState();
+
+        // Информация о том, сейчас ход
+        dataP1.isTurn = this.currentUserId == this.player1.socket.id;
+        dataP2.isTurn = this.currentUserId == this.player2.socket.id;
+
+        // Информация о поле - тот кто ходит получает поле со списком возможных ходов, другой видит только поле
+        dataP1.field = dataP1.isTurn ? this.player1.field : this.field;
+        dataP2.field = dataP2.isTurn ? this.player2.field : this.field;
+
+        // Подсчет количества фишек для каждого игрока
+        this.calculateCheckers();
+        dataP1.countCheckersP1 = dataP2.countCheckersP1 = this.player1.countCheckers;
+        dataP1.countCheckersP2 = dataP2.countCheckersP2 = this.player2.countCheckers;
+
+        this.player1.socket.emit(SocketComands.NEXT_TURN, dataP1);
+        this.player2.socket.emit(SocketComands.NEXT_TURN, dataP2);
     }
 
     /**
      * Проверка есть ли доступный ход у игрока
-     * @param cell 
-     * @param player 
-     * @returns 
+     * @param player - игрок для которого ищутся возможные ходы
+     * @returns true - есть хоть один доступный ход, false - нету ни одного хода
      */
     private checkAvailableTurns(player: Player): boolean {
         let hasAvailable = false;
@@ -294,27 +350,27 @@ export class GameRoom {
                 directionCells[directionCells.length - 1].push(this.field[i][cell.y]);
             }
 
-            // Левая диагональ - направление до ячейки
+            // Левая диагональ - направление от ячейки вверх
             directionCells.push(new Array<number>());
-            for (let i = cell.y - 1, j = cell.x - 1; i >= 0 && j >= 0; --i, --j) {
+            for (let i = cell.x - 1, j = cell.y - 1; i >= 0 && j >= 0; --i, --j) {
                 directionCells[directionCells.length - 1].push(this.field[i][j]);
             }
 
-            // Левая диагональ - направление после ячейки
+            // Левая диагональ - направление от ячейки вниз
             directionCells.push(new Array<number>());
-            for (let i = cell.y + 1, j = cell.x + 1; i < this.field.length && j < this.field.length; ++i, ++j) {
+            for (let i = cell.x + 1, j = cell.y + 1; i < this.field.length && j < this.field.length; ++i, ++j) {
                 directionCells[directionCells.length - 1].push(this.field[i][j]);
             }
 
-            // Правая диагональ - направление до ячейки
+            // Правая диагональ - направление от ячейки вверх
             directionCells.push(new Array<number>());
-            for (let i = cell.y - 1, j = cell.x + 1; i >= 0 && j < this.field.length; --i, ++j) {
+            for (let i = cell.x - 1, j = cell.y + 1; i >= 0 && j < this.field.length; --i, ++j) {
                 directionCells[directionCells.length - 1].push(this.field[i][j]);
             }
 
-            // Правая диагональ - направление после ячейки
+            // Правая диагональ - направление от ячейки вниз
             directionCells.push(new Array<number>());
-            for (let i = cell.y + 1, j = cell.x - 1; i < this.field.length && j >= 0; ++i, --j) {
+            for (let i = cell.x + 1, j = cell.y - 1; i < this.field.length && j >= 0; ++i, --j) {
                 directionCells[directionCells.length - 1].push(this.field[i][j]);
             }
 
@@ -327,12 +383,19 @@ export class GameRoom {
         return hasAvailable;
     }
 
-
+    /**
+     * Проверка всех направлений для пустой ячейки, на то возможно ли сделать хол
+     * @param directionCells - список ячеек которые находятся на восьми направлениях относительно проверяемой
+     * @param player - игрок для которого проверяется возможный ход
+     * @returns true - ход возможнен false - ход невозможен
+     */
     private isHasAvailibleDirection(directionCells: Array<Array<number>>, player: Player): boolean {
         const opponentCheckerNum = player.number == this.FIRST_PLAYER ? this.SECOND_PLAYER : this.FIRST_PLAYER;
         let isOpponentFound = false;
 
         for (const cells of directionCells) {
+            isOpponentFound = false;
+
             for (let i = 0; i < cells.length; ++i) {
                 if (cells[i] == opponentCheckerNum) {
                     isOpponentFound = true;
@@ -364,5 +427,12 @@ export namespace GameRoom {
             this.x = x;
             this.y = y;
         }
+    }
+
+    export class UserGameState {
+        public field: number[][];
+        public isTurn: boolean;
+        public countCheckersP1: number;
+        public countCheckersP2: number;
     }
 }

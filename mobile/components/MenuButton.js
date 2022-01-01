@@ -63,7 +63,7 @@ export default function MenuButton({ text, onPress, initDelay }) {
     }
 
     return (
-        <TouchableWithoutFeedback onPressIn={onPressInAnim} onPressOut={onPressOutAnim}>
+        <TouchableWithoutFeedback onPressIn={onPressInAnim} onPressOut={onPressOutAnim} onPress={onPress}>
             <View style={styles.buttonContainer}>
                 <AnimatedView style={[styles.button, { height: heightInterpolate, width: widthInterpolate, color: heightInterpolate }]} colors={gradients.button}>
                     <Animated.Text style={[styles.buttonText, { fontSize: fontInterpolate }]}>{state.textVisible ? text : ''}</Animated.Text>
@@ -121,5 +121,6 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         color: 'white',
+        fontFamily: 'Poppins-Black'
     },
 });

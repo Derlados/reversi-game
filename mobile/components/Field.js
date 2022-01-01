@@ -28,7 +28,6 @@ export default function Field({ fieldSize }) {
                                             <View style={styles.checker}>
                                                 <Animated.View style={[styles.checker_first, { transform: [{ rotateY: cell.rotateInterpolate }], zIndex: cell.zIndexValueFirst }]} ></Animated.View>
                                                 <Animated.View style={[styles.checker_second, { transform: [{ rotateY: cell.rotateInterpolate }, { translateX: cell.leftPosAnimVal }], zIndex: cell.zIndexValueSecond, }]} ></Animated.View>
-
                                             </View>
                                         </View>
                                     </TouchableWithoutFeedback>

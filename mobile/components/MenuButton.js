@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
-import Colors from '../constants/colors';
+import Colors from '../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function MenuButton({ text, onPress, initDelay }) {

@@ -60,8 +60,3 @@ function turn() {
     const y = Number.parseInt(document.getElementById('y').value)
     socket.emit('game_turn', { x: x, y: y })
 }
-
-// public field: number[][];
-// public isTurn: boolean;
-// public countCheckersP1: number;
-// public countCheckersP2: number;

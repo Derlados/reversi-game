@@ -1,16 +1,16 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, Animated, Easing } from 'react-native';
+import { StyleSheet, View, Text, Animated } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Menu from '../screens/Main';
 import Settings from '../screens/Settings';
 import { Dimensions } from 'react-native';
-import Colors from '../constants/colors';
+import Colors from '../constants/Colors';
 
 const Tab = createBottomTabNavigator();
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-export default function BottomTabs() {
+export default function MenuBottomTabs() {
 
     return (
         <Tab.Navigator

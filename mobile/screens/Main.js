@@ -1,9 +1,9 @@
 import React from 'react';
-import Colors from '../constants/colors';
+import Colors from '../constants/Colors';
 import { StyleSheet, View, Image } from 'react-native';
 import MenuButton from '../components/MenuButton'
 
-export default function Main() {
+export default function Main({ navigation }) {
 
     return (
         <View style={styles.container}>

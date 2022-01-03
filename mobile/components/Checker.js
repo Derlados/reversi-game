@@ -3,18 +3,21 @@ import { StyleSheet, Text, View, Animated, Easing, TouchableWithoutFeedback } fr
 import { Dimensions } from 'react-native';
 import Colors from '../constants/Colors';
 
-
-export default class Cell extends React.Component {
+export default class Checker extends React.Component {
     static ANIMATION_DURATION = 700;
+    static BLACK_SIDE = 1;
+    static WHITE_SIDE = 2;
 
     constructor(props) {
         super(props);
+        this.initSide = this.props.initSide ?? Checker.BLACK_SIDE;
+        console.log(this.initSide);
 
-        this.zIndexFirst = 0;
-        this.zIndexSecond = 1;
+        this.zIndexFirst = this.initSide == Checker.BLACK_SIDE ? 1 : 0;
+        this.zIndexSecond = this.initSide == Checker.WHITE_SIDE ? 1 : 0;
 
-        this.zIndexValueFirst = new Animated.Value(0);
-        this.zIndexValueSecond = new Animated.Value(1);
+        this.zIndexValueFirst = new Animated.Value(this.zIndexFirst);
+        this.zIndexValueSecond = new Animated.Value(this.zIndexSecond);
 
         this.rotateAnimVal = new Animated.Value(0);
         this.rotateInterpolate = this.rotateAnimVal.interpolate({
@@ -40,7 +43,7 @@ export default class Cell extends React.Component {
 
         Animated.timing(this.rotateAnimVal, {
             toValue: 1,
-            duration: Cell.ANIMATION_DURATION,
+            duration: Checker.ANIMATION_DURATION,
             easing: Easing.linear,
             useNativeDriver: true
         }).start(() => {
@@ -48,14 +51,14 @@ export default class Cell extends React.Component {
         });
 
         Animated.timing(this.leftPosAnimVal, {
-            toValue: 5,
-            duration: Cell.ANIMATION_DURATION / 2,
+            toValue: 4,
+            duration: Checker.ANIMATION_DURATION / 2,
             useNativeDriver: true
         }).start(() => {
-            this.leftPosAnimVal.setValue(-5);
+            this.leftPosAnimVal.setValue(-4);
             Animated.timing(this.leftPosAnimVal, {
                 toValue: 0,
-                duration: Cell.ANIMATION_DURATION / 2,
+                duration: Checker.ANIMATION_DURATION / 2,
                 useNativeDriver: true
             }).start()
         });
@@ -63,11 +66,9 @@ export default class Cell extends React.Component {
 
     render() {
         return (
-            <View style={styles.cell} >
-                <View style={styles.checker}>
-                    <Animated.View style={[styles.checkerSide, { backgroundColor: 'black', transform: [{ rotateY: this.rotateInterpolate }], zIndex: this.zIndexValueFirst, left: 0 }]} ></Animated.View>
-                    <Animated.View style={[styles.checkerSide, { backgroundColor: 'white', transform: [{ rotateY: this.rotateInterpolate }, { translateX: this.leftPosAnimVal }], zIndex: this.zIndexValueSecond, }]} ></Animated.View>
-                </View>
+            <View style={styles.checker}>
+                <Animated.View style={[styles.checkerSide, { backgroundColor: 'black', transform: [{ rotateY: this.rotateInterpolate }], zIndex: this.zIndexValueFirst, left: 0 }]} ></Animated.View>
+                <Animated.View style={[styles.checkerSide, { backgroundColor: 'white', transform: [{ rotateY: this.rotateInterpolate }, { translateX: this.leftPosAnimVal }], zIndex: this.zIndexValueSecond, }]} ></Animated.View>
             </View>
         );
     }

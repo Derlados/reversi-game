@@ -3,9 +3,10 @@ import Colors from '../constants/Colors';
 import { StyleSheet, View, Image } from 'react-native';
 import MenuButton from '../components/MenuButton';
 import Screens from '../constants/Screens'
+import Field from '../components/Field';
 
 export default function Main({ navigation }) {
-
+    navigation.navigate(Screens.GAME);
     return (
         <View style={styles.container}>
             <Image style={styles.logo} source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png' }} />

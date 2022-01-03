@@ -1,8 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Dimensions } from 'react-native';
-import Cell from '../components/Cell';
-import { useIsMounted } from 'usehooks-ts'
+import Checker from './Checker';
+import { useIsMounted } from 'usehooks-ts';
+import Colors from '../constants/Colors';
 
 const windowWidth = Dimensions.get('window').width;
 
@@ -18,7 +19,7 @@ export default function AnimatedScreebsaver() {
                 currentCell = currentCell == 3 ? 0 : currentCell + 1;
                 recursiveAnimation();
             }
-        }, Cell.ANIMATION_DURATION);
+        }, Checker.ANIMATION_DURATION);
     }
     recursiveAnimation();
 
@@ -26,12 +27,20 @@ export default function AnimatedScreebsaver() {
     return (
         <View style={styles.cellsContainer}>
             <View style={styles.cellsRow}>
-                <Cell ref={child => { cells[0] = child }} />
-                <Cell ref={child => { cells[1] = child }} />
+                <View style={styles.cell}>
+                    <Checker ref={child => { cells[0] = child }} />
+                </View>
+                <View style={styles.cell}>
+                    <Checker ref={child => { cells[1] = child }} />
+                </View>
             </View>
             <View style={styles.cellsRow}>
-                <Cell ref={child => { cells[3] = child }} />
-                <Cell ref={child => { cells[2] = child }} />
+                <View style={styles.cell}>
+                    <Checker ref={child => { cells[3] = child }} />
+                </View>
+                <View style={styles.cell}>
+                    <Checker ref={child => { cells[2] = child }} />
+                </View>
             </View>
         </View>
     );
@@ -44,6 +53,14 @@ const styles = StyleSheet.create({
     },
     cellsRow: {
         flex: 1,
-        flexDirection: 'row'
+        flexDirection: 'row',
+        backgroundColor: Colors.secondaryGreen
+    },
+    cell: {
+        flex: 1,
+        borderColor: 'black',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderWidth: 1
     },
 });

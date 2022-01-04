@@ -1,32 +1,41 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, ImageBackground, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
 import { Dimensions } from 'react-native';
-import AnimatedScreebsaver from '../components/AnimatedScreebsaver';
-import AnimatedText from '../components/AnimatedText';
+import AnimatedScreensaver from '../components/screensaver/AnimatedScreebsaver';
+import AnimatedText from '../components/screensaver/AnimatedText';
 import Colors from '../constants/Colors';
-import Field from '../components/Field';
-import PlayerRow from '../components/PlayerRow';
+import Field from '../components/game/Field';
+import PlayerRow from '../components/game/PlayerRow';
+import GameTimer from '../components/game/GameTimer';
+import Header from '../components/general/Header';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function Game({ navigation }) {
-    const [isReady, setIsReady] = useState(true);
+    const [isReady, setIsReady] = useState(false);
+
+    setTimeout(() => {
+        setIsReady(true);
+    }, 3000);
 
     if (isReady) {
         // Game 
         return (
-            <View style={styles.game}>
-                <PlayerRow />
-                <Field fieldSize={8} />
-                <PlayerRow />
-            </View>
+            <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.game}>
+                <Header hasMenu={true} />
+                <View style={styles.gameContainer}>
+                    <PlayerRow />
+                    <Field fieldSize={8} />
+                    <GameTimer seconds={60} />
+                </View>
+            </ImageBackground>
         );
     } else {
         // Loading ...
         return (
             <View style={styles.screensaver}>
-                <AnimatedScreebsaver />
+                <AnimatedScreensaver />
                 <View style={styles.textContainer}>
                     <AnimatedText loadingText={'Loading'} />
                 </View>
@@ -48,10 +57,17 @@ const styles = StyleSheet.create({
     },
     game: {
         flexDirection: 'column',
-        justifyContent: 'space-around',
+        justifyContent: 'flex-start',
         alignItems: 'center',
         height: '100%',
         width: '100%',
         backgroundColor: Colors.primaryBackgroundGreen
+    },
+    gameContainer: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        width: '100%',
+        padding: 10,
     }
 });

@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Screens from './constants/Screens';
 import Game from './screens/Game';
+import Menu from './screens/Menu';
 import MenuBottomTabs from './navigation/MenuBottomTabs';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
@@ -23,7 +24,7 @@ export default function App() {
         <Stack.Navigator>
           <Stack.Screen
             name={Screens.MENU}
-            component={MenuBottomTabs}
+            component={Menu}
             options={{ headerShown: false }}
           />
           <Stack.Screen

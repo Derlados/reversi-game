@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Dimensions } from 'react-native';
-import Checker from './Checker';
+import Checker from '../general/Checker';
 import { useIsMounted } from 'usehooks-ts';
-import Colors from '../constants/Colors';
+import Colors from '../../constants/Colors';
 
 const windowWidth = Dimensions.get('window').width;
 
-export default function AnimatedScreebsaver() {
+export default function AnimatedScreensaver() {
     let cells = [];
     let currentCell = 0;
     const isMounted = useIsMounted()
@@ -22,7 +22,6 @@ export default function AnimatedScreebsaver() {
         }, Checker.ANIMATION_DURATION);
     }
     recursiveAnimation();
-
 
     return (
         <View style={styles.cellsContainer}>

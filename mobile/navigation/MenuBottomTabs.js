@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, Animated } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Menu from '../screens/Main';
+import Menu from '../screens/Menu';
 import Settings from '../screens/Settings';
 import { Dimensions } from 'react-native';
 import Colors from '../constants/Colors';
@@ -21,7 +21,7 @@ export default function MenuBottomTabs() {
             }}
         >
             <Tab.Screen
-                name="Menu"
+                name="Main"
                 component={Menu}
                 options={{
                     tabBarIcon: ({ focused }) => (

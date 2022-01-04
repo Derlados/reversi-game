@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
 import { Dimensions } from 'react-native';
-import Colors from '../constants/Colors';
+import Colors from '../../constants/Colors';
 
 export default class Checker extends React.Component {
     static ANIMATION_DURATION = 700;
@@ -11,7 +11,6 @@ export default class Checker extends React.Component {
     constructor(props) {
         super(props);
         this.initSide = this.props.initSide ?? Checker.BLACK_SIDE;
-        console.log(this.initSide);
 
         this.zIndexFirst = this.initSide == Checker.BLACK_SIDE ? 1 : 0;
         this.zIndexSecond = this.initSide == Checker.WHITE_SIDE ? 1 : 0;

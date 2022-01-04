@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
-import Colors from '../constants/Colors';
+import Colors from '../../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export default function MenuButton({ text, onPress, initDelay }) {
-    const [state, setState] = useState({
-        textVisible: false,
-        isAnimated: false
-    });
-
-    const widthAnimVal = new Animated.Value(state.isAnimated ? 1 : 0);
+    const widthAnimVal = new Animated.Value(0);
     const widthInterpolate = widthAnimVal.interpolate({
         inputRange: [0, 1],
         outputRange: ['0%', '80%']
@@ -28,15 +23,12 @@ export default function MenuButton({ text, onPress, initDelay }) {
         outputRange: [20, 22]
     });
 
-
+    const opacityAnimVal = new Animated.Value(0);
 
     const initAnim = () => {
         Animated.timing(widthAnimVal, animationConfigs.initConfig)
             .start(() => {
-                setState({
-                    textVisible: true,
-                    isAnimated: true,
-                })
+                opacityAnimVal.setValue(1);
             });
     }
 
@@ -56,17 +48,15 @@ export default function MenuButton({ text, onPress, initDelay }) {
         ]).start();
     }
 
-    if (!state.isAnimated) {
-        setTimeout(() => {
-            initAnim();
-        }, initDelay);
-    }
+    setTimeout(() => {
+        initAnim();
+    }, initDelay);
 
     return (
         <TouchableWithoutFeedback onPressIn={onPressInAnim} onPressOut={onPressOutAnim} onPress={onPress}>
             <View style={styles.buttonContainer}>
                 <AnimatedView style={[styles.button, { height: heightInterpolate, width: widthInterpolate, color: heightInterpolate }]} colors={gradients.button}>
-                    <Animated.Text style={[styles.buttonText, { fontSize: fontInterpolate }]}>{state.textVisible ? text : ''}</Animated.Text>
+                    <Animated.Text style={[styles.buttonText, { fontSize: fontInterpolate, opacity: opacityAnimVal }]}>{text}</Animated.Text>
                 </AnimatedView>
             </View>
         </TouchableWithoutFeedback>
@@ -121,6 +111,7 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         color: 'white',
-        fontFamily: 'Poppins-Black'
+        fontFamily: 'Poppins-Black',
+
     },
 });

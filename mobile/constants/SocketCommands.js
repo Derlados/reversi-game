@@ -1,5 +1,6 @@
 export default class SocketCommands {
     static CONNECTION = 'connection';
+    static START = 'start';
     static DISCONNECT = 'disconnect';
     static GAME_TURN = 'game_turn';
     static GIVE_UP = 'give_up';

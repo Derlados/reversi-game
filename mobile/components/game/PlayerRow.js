@@ -5,23 +5,26 @@ import Colors from '../../constants/Colors';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+import { useSelector } from 'react-redux';
 
 export default function PlayerRow() {
+    const playerNames = useSelector(state => [state.player1Name, state.player2Name]);
+    const countCheckers = useSelector(state => [state.countCheckersP1, state.countCheckersP2]);
 
     return (
         <View style={styles.container}>
             <View style={styles.playerContainer}>
-                <Text style={[styles.text, styles.playerName]}>Player1</Text>
+                <Text style={[styles.text, styles.playerName]}>{playerNames[0]}</Text>
                 <View style={[styles.checkersCounter, { backgroundColor: 'black' }]}>
-                    <Text style={styles.text}>5</Text>
+                    <Text style={styles.text}>{countCheckers[0]}</Text>
                 </View>
             </View>
             <Text style={styles.text}>VS</Text>
             <View style={styles.playerContainer}>
                 <View style={[styles.checkersCounter, { backgroundColor: 'white' }]}>
-                    <Text style={[styles.text, { color: 'black' }]}>5</Text>
+                    <Text style={[styles.text, { color: 'black' }]}>{countCheckers[1]}</Text>
                 </View>
-                <Text style={[styles.text, styles.playerName]}>Player1</Text>
+                <Text style={[styles.text, styles.playerName]}>{playerNames[1]}</Text>
             </View>
         </View>
     );

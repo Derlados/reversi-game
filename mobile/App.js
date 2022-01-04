@@ -8,6 +8,8 @@ import Menu from './screens/Menu';
 import MenuBottomTabs from './navigation/MenuBottomTabs';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
+import { store } from './redux/reducers/GameReducer';
+import { Provider } from 'react-redux';
 
 const Stack = createStackNavigator();
 
@@ -20,20 +22,22 @@ export default function App() {
 
   if (isLoadFont) {
     return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name={Screens.MENU}
-            component={Menu}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name={Screens.GAME}
-            component={Game}
-            options={{ headerShown: false }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name={Screens.MENU}
+              component={Menu}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name={Screens.GAME}
+              component={Game}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     );
   } else {
     return (

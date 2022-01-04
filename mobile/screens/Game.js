@@ -8,18 +8,14 @@ import Field from '../components/game/Field';
 import PlayerRow from '../components/game/PlayerRow';
 import GameTimer from '../components/game/GameTimer';
 import Header from '../components/general/Header';
-
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+import { useSelector, useDispatch } from 'react-redux';
+import { connect } from '../redux/actions/GameActions'
 
 export default function Game({ navigation }) {
-    const [isReady, setIsReady] = useState(false);
+    const isConnected = useSelector(state => state.isConnected);
+    const dispatch = useDispatch();
 
-    setTimeout(() => {
-        setIsReady(true);
-    }, 3000);
-
-    if (isReady) {
+    if (isConnected) {
         // Game 
         return (
             <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.game}>
@@ -32,6 +28,7 @@ export default function Game({ navigation }) {
             </ImageBackground>
         );
     } else {
+        dispatch(connect());
         // Loading ...
         return (
             <View style={styles.screensaver}>

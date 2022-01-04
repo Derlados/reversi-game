@@ -21,6 +21,7 @@ export class GameRoom {
     private EMPTY = 0;
     private FIRST_PLAYER = 1;
     private SECOND_PLAYER = 2;
+    private AVAILABLE_TURN = 3;
 
     private roomId: string;
     private deleteRoom: (roomId: string) => void;
@@ -61,8 +62,9 @@ export class GameRoom {
     public startGame(roomId: string) {
         this.initPlayerSocket(this.player1);
         this.initPlayerSocket(this.player2);
-        this.player1.socket.emit('start', { description: `game started, id: ${roomId}`, roomId: roomId });
-        this.player2.socket.emit('start', { description: `game started, id: ${roomId}`, roomId: roomId });
+        this.player1.socket.emit('start', { roomId: roomId });
+        this.player2.socket.emit('start', { roomId: roomId });
+        console.log("start game");
 
         this.gameAnalyze();
     }
@@ -122,10 +124,10 @@ export class GameRoom {
      * @param player - игрок для которого настраивается сокет
      */
     private initPlayerSocket(player: Player) {
-        player.socket.on(SocketComands.GAME_TURN, (data: GameRoom.Coord) => {
+        player.socket.on(SocketComands.GAME_TURN, ({ x, y }) => {
             // Проверка на случай если придет ложный запрос о ходе не того игрока
             if (this.currentUserId == player.socket.id) {
-                this.turnProcess(data, player);
+                this.turnProcess(new GameRoom.Cell(x, y, player.number), player);
             } else {
                 console.log("wrong player");
             }
@@ -144,45 +146,17 @@ export class GameRoom {
      * Обпработка хода. Изменение состояния игры в соответствии с действием игрока (изменение доски, подсчет фишек для каждого игрока)
      * @param playerTurn - координаты точки куда походил игрок
      */
-    private turnProcess(playerTurn: GameRoom.Coord, player: Player): void {
-        const horCoord = new GameRoom.Coord(playerTurn.x, 0);
-        const verCoord = new GameRoom.Coord(0, playerTurn.y);
-
-        const minLeftDimen = Math.min(playerTurn.x, playerTurn.y); // Минимальная размерность 
-        const leftDiagCoord = new GameRoom.Coord(playerTurn.x - minLeftDimen, playerTurn.y - minLeftDimen); // (От каждой размерности отнимается минимальная, чтобы найти старт левой диагонали)
-
-        const minRightDimen = Math.min(playerTurn.x, (this.field.length - 1) - playerTurn.y); // Минимальная размерность (Для правой диагонали нужна обратная длина по горизонтали, тянемся к правой стенке)
-        const rightDiagCoord = new GameRoom.Coord(playerTurn.x - minRightDimen, playerTurn.y + minRightDimen);
-
+    private turnProcess(playerTurn: GameRoom.Cell, player: Player): void {
         // Изменение доски в соответствии с выбором
-        const size = this.field.length;
-        for (let i = 0; i < size; ++i) {
-            // Прохлжение по горизонтали
-            if (horCoord.y != playerTurn.y && this.field[horCoord.x][horCoord.y] == player.number) {
-                this.flipCells(horCoord, playerTurn, GameRoom.Direction.HORIZONTAL, player);
-            }
-            ++horCoord.y;
+        const directionCells = this.getCellsFromEveryDirection(playerTurn);
+        const cellsToFlip = this.findRightDirectionCells(directionCells, player);
 
-            // Прохожение по вертикали
-            if (verCoord.x != playerTurn.x && this.field[verCoord.x][verCoord.y] == player.number) {
-                this.flipCells(verCoord, playerTurn, GameRoom.Direction.VERTICAL, player);
+        for (const cells of cellsToFlip) {
+            for (let i = 0; i < cells.length; ++i) {
+                this.field[cells[i].x][cells[i].y] = player.number;
             }
-            ++verCoord.x;
-
-            // Прохожение по левой диагонали
-            if (leftDiagCoord.x < size && leftDiagCoord.y < size && leftDiagCoord.x != playerTurn.x && this.field[leftDiagCoord.x][leftDiagCoord.y] == player.number) {
-                this.flipCells(leftDiagCoord, playerTurn, GameRoom.Direction.DIAGONAL_LEFT, player);
-            }
-            ++leftDiagCoord.x;
-            ++leftDiagCoord.y;
-
-            // Прохожение по правой диагонали
-            if (rightDiagCoord.x < size && rightDiagCoord.y >= 0 && rightDiagCoord.x != playerTurn.x && this.field[rightDiagCoord.x][rightDiagCoord.y] == player.number) {
-                this.flipCells(rightDiagCoord, playerTurn, GameRoom.Direction.DIAGONAL_RIGHT, player);
-            }
-            ++rightDiagCoord.x;
-            --rightDiagCoord.y;
         }
+        this.field[playerTurn.x][playerTurn.y] = player.number;
 
         this.gameAnalyze();
     }
@@ -201,51 +175,6 @@ export class GameRoom {
                 } else if (this.field[i][j] == this.SECOND_PLAYER) {
                     ++this.player2.countCheckers;
                 }
-            }
-        }
-    }
-
-    /**
-     * Переворот фишек в ряду
-     * @param first - первая фишка
-     * @param second - вторая фишка
-     * @param dir - направление переворота
-     */
-    private flipCells(first: GameRoom.Coord, second: GameRoom.Coord, dir: GameRoom.Direction, player: Player): void {
-        // Для обхода слев на право
-        if ((dir == GameRoom.Direction.HORIZONTAL || GameRoom.Direction.DIAGONAL_LEFT) && (first.y > second.y)) {
-            [first, second] = [second, first];
-        }
-
-        //  Для обхода сверху вниз
-        if ((dir == GameRoom.Direction.VERTICAL || GameRoom.Direction.DIAGONAL_RIGHT) && (first.x > second.x)) {
-            [first, second] = [second, first];
-        }
-
-        switch (dir) {
-            case GameRoom.Direction.HORIZONTAL: {
-                for (let i = first.y; i <= second.y; ++i) {
-                    this.field[first.x][i] = player.number;
-                }
-                break;
-            }
-            case GameRoom.Direction.VERTICAL: {
-                for (let i = first.x; i <= second.x; ++i) {
-                    this.field[i][first.y] = player.number;
-                }
-                break;
-            }
-            case GameRoom.Direction.DIAGONAL_LEFT: {
-                for (let x = first.x, y = first.y; y <= second.y; ++x, ++y) {
-                    this.field[x][y] = player.number;
-                }
-                break;
-            }
-            case GameRoom.Direction.DIAGONAL_RIGHT: {
-                for (let x = first.x, y = first.y; y >= second.y; ++x, --y) {
-                    this.field[x][y] = player.number;
-                }
-                break;
             }
         }
     }
@@ -313,74 +242,85 @@ export class GameRoom {
         let hasAvailable = false;
 
         // Нахождение всех пустых ячеек
-        let emptyCheckers: Array<GameRoom.Coord> = new Array();
+        let emptyCheckers: Array<GameRoom.Cell> = new Array();
         for (let i = 0; i < this.field.length; ++i) {
             for (let j = 0; j < this.field.length; ++j) {
                 if (this.field[i][j] == this.EMPTY) {
-                    emptyCheckers.push(new GameRoom.Coord(i, j));
+                    emptyCheckers.push(new GameRoom.Cell(i, j, this.field[i][j]));
                 }
             }
         }
 
         // Проверка для всех восьми направлений для пустых ячеек
         for (const cell of emptyCheckers) {
-            let directionCells: Array<Array<number>> = new Array<Array<number>>(); // 8 направлений
+            let directionCells: Array<Array<GameRoom.Cell>> = this.getCellsFromEveryDirection(cell);
 
-            // Горизонтальное направление до ячейки
-            directionCells.push(new Array<number>());
-            for (let i = cell.y - 1; i >= 0; --i) {
-                directionCells[directionCells.length - 1].push(this.field[cell.x][i]);
-            }
-
-            // Горизонтальное направление после ячейки
-            directionCells.push(new Array<number>());
-            for (let i = cell.y + 1; i < this.field.length; ++i) {
-                directionCells[directionCells.length - 1].push(this.field[cell.x][i]);
-            }
-
-            // Вертикальное направление до ячейки
-            directionCells.push(new Array<number>());
-            for (let i = cell.x - 1; i >= 0; --i) {
-                directionCells[directionCells.length - 1].push(this.field[i][cell.y]);
-            }
-
-            // Вертикальное направление после ячейки
-            directionCells.push(new Array<number>());
-            for (let i = cell.x + 1; i < this.field.length; ++i) {
-                directionCells[directionCells.length - 1].push(this.field[i][cell.y]);
-            }
-
-            // Левая диагональ - направление от ячейки вверх
-            directionCells.push(new Array<number>());
-            for (let i = cell.x - 1, j = cell.y - 1; i >= 0 && j >= 0; --i, --j) {
-                directionCells[directionCells.length - 1].push(this.field[i][j]);
-            }
-
-            // Левая диагональ - направление от ячейки вниз
-            directionCells.push(new Array<number>());
-            for (let i = cell.x + 1, j = cell.y + 1; i < this.field.length && j < this.field.length; ++i, ++j) {
-                directionCells[directionCells.length - 1].push(this.field[i][j]);
-            }
-
-            // Правая диагональ - направление от ячейки вверх
-            directionCells.push(new Array<number>());
-            for (let i = cell.x - 1, j = cell.y + 1; i >= 0 && j < this.field.length; --i, ++j) {
-                directionCells[directionCells.length - 1].push(this.field[i][j]);
-            }
-
-            // Правая диагональ - направление от ячейки вниз
-            directionCells.push(new Array<number>());
-            for (let i = cell.x + 1, j = cell.y - 1; i < this.field.length && j >= 0; ++i, --j) {
-                directionCells[directionCells.length - 1].push(this.field[i][j]);
-            }
-
-            if (this.isHasAvailibleDirection(directionCells, player)) {
+            if (this.findRightDirectionCells(directionCells, player).length != 0) {
                 hasAvailable = true;
-                player.field[cell.x][cell.y] = 3;
+                player.field[cell.x][cell.y] = this.AVAILABLE_TURN;
             }
         }
 
         return hasAvailable;
+    }
+
+    /**
+     * Нахождение всех клеток для каждого из направлений
+     * @param cell - начальная ячейка
+     * @returns - массив ячеек для каждого из 8 направлений в виде -> cells[номер направления][номер ячейки]
+     */
+    private getCellsFromEveryDirection(cell: GameRoom.Cell) {
+        let directionCells: Array<Array<GameRoom.Cell>> = new Array<Array<GameRoom.Cell>>(); // 8 направлений
+
+        // Горизонтальное направление до ячейки
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.y - 1; i >= 0; --i) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(cell.x, i, this.field[cell.x][i]));
+        }
+
+        // Горизонтальное направление после ячейки
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.y + 1; i < this.field.length; ++i) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(cell.x, i, this.field[cell.x][i]));
+        }
+
+        // Вертикальное направление до ячейки
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.x - 1; i >= 0; --i) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(i, cell.y, this.field[i][cell.y]));
+        }
+
+        // Вертикальное направление после ячейки
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.x + 1; i < this.field.length; ++i) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(i, cell.y, this.field[i][cell.y]));
+        }
+
+        // Левая диагональ - направление от ячейки вверх
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.x - 1, j = cell.y - 1; i >= 0 && j >= 0; --i, --j) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(i, j, this.field[i][j]));
+        }
+
+        // Левая диагональ - направление от ячейки вниз
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.x + 1, j = cell.y + 1; i < this.field.length && j < this.field.length; ++i, ++j) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(i, j, this.field[i][j]));
+        }
+
+        // Правая диагональ - направление от ячейки вверх
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.x - 1, j = cell.y + 1; i >= 0 && j < this.field.length; --i, ++j) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(i, j, this.field[i][j]));
+        }
+
+        // Правая диагональ - направление от ячейки вниз
+        directionCells.push(new Array<GameRoom.Cell>());
+        for (let i = cell.x + 1, j = cell.y - 1; i < this.field.length && j >= 0; ++i, --j) {
+            directionCells[directionCells.length - 1].push(new GameRoom.Cell(i, j, this.field[i][j]));
+        }
+
+        return directionCells;
     }
 
     /**
@@ -389,48 +329,44 @@ export class GameRoom {
      * @param player - игрок для которого проверяется возможный ход
      * @returns true - ход возможнен false - ход невозможен
      */
-    private isHasAvailibleDirection(directionCells: Array<Array<number>>, player: Player): boolean {
-        const opponentCheckerNum = player.number == this.FIRST_PLAYER ? this.SECOND_PLAYER : this.FIRST_PLAYER;
+    private findRightDirectionCells(directionCells: Array<Array<GameRoom.Cell>>, player: Player): Array<Array<GameRoom.Cell>> {
+        const rightDirectionCells = new Array<Array<GameRoom.Cell>>();
+        const oponnentNumber = player.number == this.FIRST_PLAYER ? this.SECOND_PLAYER : this.FIRST_PLAYER;
         let isOpponentFound = false;
 
         for (const cells of directionCells) {
             isOpponentFound = false;
 
             for (let i = 0; i < cells.length; ++i) {
-                if (cells[i] == opponentCheckerNum) {
+                if (cells[i].value == oponnentNumber) {
                     isOpponentFound = true;
-                } else if (cells[i] == this.EMPTY || (cells[i] == player.number && !isOpponentFound)) {
+                } else if (cells[i].value == this.EMPTY || (cells[i].value == player.number && !isOpponentFound)) {
                     break;
-                } else if (cells[i] == player.number && isOpponentFound) {
-                    return true;
+                } else if (cells[i].value == player.number && isOpponentFound) {
+                    rightDirectionCells.push(cells.slice(0, i));
                 }
             }
         }
 
-        return false;
+        return rightDirectionCells;
     }
 }
 
 export namespace GameRoom {
-    export enum Direction {
-        HORIZONTAL,
-        VERTICAL,
-        DIAGONAL_LEFT,
-        DIAGONAL_RIGHT,
-    }
-
-    export class Coord {
+    export class Cell {
         x: number;
         y: number;
+        value: number;
 
-        constructor(x: number, y: number) {
+        constructor(x: number, y: number, value: number) {
             this.x = x;
             this.y = y;
+            this.value = value;
         }
     }
 
     export class UserGameState {
-        public field: number[][];
+        public field: Number[][];
         public isTurn: boolean;
         public countCheckersP1: number;
         public countCheckersP2: number;

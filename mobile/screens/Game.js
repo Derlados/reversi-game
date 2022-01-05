@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, ImageBackground, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
-import { Dimensions } from 'react-native';
+import React from 'react';
+import { StyleSheet, ImageBackground, View } from 'react-native';
 import AnimatedScreensaver from '../components/screensaver/AnimatedScreebsaver';
 import AnimatedText from '../components/screensaver/AnimatedText';
 import Colors from '../constants/Colors';
@@ -10,10 +9,19 @@ import GameTimer from '../components/game/GameTimer';
 import Header from '../components/general/Header';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect } from '../redux/actions/GameActions'
+import { makeTurn, turnTimeOut } from '../redux/actions/GameActions';
 
 export default function Game({ navigation }) {
     const isConnected = useSelector(state => state.isConnected);
     const dispatch = useDispatch();
+
+    const onUserChoose = (x, y) => {
+        dispatch(makeTurn(x, y));
+    }
+
+    const onTimeOut = () => {
+        dispatch(turnTimeOut());
+    }
 
     if (isConnected) {
         // Game 
@@ -22,8 +30,8 @@ export default function Game({ navigation }) {
                 <Header hasMenu={true} />
                 <View style={styles.gameContainer}>
                     <PlayerRow />
-                    <Field fieldSize={8} />
-                    <GameTimer seconds={60} />
+                    <Field fieldSize={8} onUserChoose={onUserChoose} />
+                    <GameTimer seconds={10} onTimeOut={onTimeOut} />
                 </View>
             </ImageBackground>
         );

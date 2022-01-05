@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
 import { Dimensions } from 'react-native';
 import Colors from '../../constants/Colors';
+import GameValues from '../../constants/GameValues';
 
 export default class Checker extends React.Component {
     static ANIMATION_DURATION = 700;
-    static BLACK_SIDE = 1;
-    static WHITE_SIDE = 2;
+    static BLACK_SIDE = GameValues.FIRST_PLAYER;
+    static WHITE_SIDE = GameValues.SECOND_PLAYER;
 
     constructor(props) {
         super(props);
@@ -25,6 +26,14 @@ export default class Checker extends React.Component {
         });
 
         this.leftPosAnimVal = new Animated.Value(0);
+    }
+
+    getSide() {
+        if (this.zIndexFirst == 1) {
+            return Checker.BLACK_SIDE;
+        } else {
+            return Checker.WHITE_SIDE;
+        }
     }
 
     startAnim() {
@@ -59,7 +68,7 @@ export default class Checker extends React.Component {
                 toValue: 0,
                 duration: Checker.ANIMATION_DURATION / 2,
                 useNativeDriver: true
-            }).start()
+            }).start();
         });
     }
 

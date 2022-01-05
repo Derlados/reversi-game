@@ -19,8 +19,7 @@ export const gameMiddleware = (store) => (next) => (action) => {
             break;
         }
         case GameActionTypes.TURN_TIME_OUT: {
-            const coord = findAvailableTurn(store.getState().field);
-            socket.emit(SocketCommands.GAME_TURN, coord)
+            socket.emit(SocketCommands.GAME_TURN_TIMEOUT, {});
             break;
         }
         case GameActionTypes.GIVE_UP: {
@@ -40,11 +39,10 @@ function initSocket(next) {
     socket.on(SocketCommands.NEXT_TURN, (gameState) => {
         next({ type: GameActionTypes.SET_GAME_STATE, payload: gameState });
     })
+    socket.on(SocketCommands.TIME_TURN, (time) => {
+        next({ type: GameActionTypes.SET_TURN_TIME, payload: { time: time } });
+    })
     socket.on(SocketCommands.END_GAME, (data) => {
         //TODO
     })
-}
-
-function findAvailableTurn(field) {
-    //TODO
 }

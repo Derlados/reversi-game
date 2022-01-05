@@ -22,6 +22,10 @@ export class GameRoom {
     private FIRST_PLAYER = 1;
     private SECOND_PLAYER = 2;
     private AVAILABLE_TURN = 3;
+    private TURN_TIME_SEC = 10;
+
+    private timer: NodeJS.Timer;
+    private currentTime = this.TURN_TIME_SEC;
 
     private roomId: string;
     private deleteRoom: (roomId: string) => void;
@@ -127,12 +131,11 @@ export class GameRoom {
         player.socket.on(SocketComands.GAME_TURN, ({ x, y }) => {
             // Проверка на случай если придет ложный запрос о ходе не того игрока
             if (this.currentUserId == player.socket.id) {
+                clearTimeout(player.timer);
                 this.turnProcess(new GameRoom.Cell(x, y, player.number), player);
             } else {
                 console.log("wrong player");
             }
-
-            this.player2.socket.emit('message', { data: this.player1.socket.id })
         });
         player.socket.on(SocketComands.GIVE_UP, () => {
             this.endGame(`game ended - opponent gave up`);
@@ -140,6 +143,43 @@ export class GameRoom {
         player.socket.on(SocketComands.DISCONNECT, () => {
             this.endGameDisconnect(player.socket.id);
         });
+    }
+
+    private getRandomAvailableTurn(player: Player): GameRoom.Cell {
+        const turns = new Array<GameRoom.Cell>();
+
+        for (let i = 0; i < player.field.length; ++i) {
+            for (let j = 0; j < player.field[i].length; ++j) {
+                if (player.field[i][j] == this.AVAILABLE_TURN) {
+                    turns.push(new GameRoom.Cell(i, j, player.number));
+                }
+            }
+        }
+
+        return turns[Math.floor(Math.random() * turns.length)];
+    }
+
+    private startPlayerTimer(player: Player) {
+        player.timer = setTimeout(() => {
+            const cell = this.getRandomAvailableTurn(player);
+            this.turnProcess(cell, player);
+        }, this.TURN_TIME_SEC * 1000);
+
+        this.currentTime = this.TURN_TIME_SEC;
+        clearTimeout(this.timer);
+        this.startTimerTimeout();
+    }
+
+    private startTimerTimeout() {
+        this.timer = setTimeout(() => {
+            --this.currentTime;
+
+            if (this.currentTime >= 0) {
+                this.player1.socket.emit(SocketComands.TIME_TURN, this.currentTime);
+                this.player2.socket.emit(SocketComands.TIME_TURN, this.currentTime);
+                this.startTimerTimeout();
+            }
+        }, 1000);
     }
 
     /**
@@ -206,6 +246,7 @@ export class GameRoom {
             this.currentUserId = this.player1.socket.id;
         }
 
+        this.startPlayerTimer(this.currentUserId == this.player1.socket.id ? this.player1 : this.player2)
         this.sendGameState();
     }
 
@@ -217,17 +258,18 @@ export class GameRoom {
         const dataP2: GameRoom.UserGameState = new GameRoom.UserGameState();
 
         // Информация о том, сейчас ход
-        dataP1.isTurn = this.currentUserId == this.player1.socket.id;
-        dataP2.isTurn = this.currentUserId == this.player2.socket.id;
+        dataP1.currentPlayer = dataP2.currentPlayer = this.currentUserId == this.player1.socket.id ? this.FIRST_PLAYER : this.SECOND_PLAYER;
 
         // Информация о поле - тот кто ходит получает поле со списком возможных ходов, другой видит только поле
-        dataP1.field = dataP1.isTurn ? this.player1.field : this.field;
-        dataP2.field = dataP2.isTurn ? this.player2.field : this.field;
+        dataP1.field = this.currentUserId == this.player1.socket.id ? this.player1.field : this.field;
+        dataP2.field = this.currentUserId == this.player2.socket.id ? this.player2.field : this.field;
 
         // Подсчет количества фишек для каждого игрока
         this.calculateCheckers();
         dataP1.countCheckersP1 = dataP2.countCheckersP1 = this.player1.countCheckers;
         dataP1.countCheckersP2 = dataP2.countCheckersP2 = this.player2.countCheckers;
+
+        dataP1.serverTime = dataP2.serverTime = this.TURN_TIME_SEC;
 
         this.player1.socket.emit(SocketComands.NEXT_TURN, dataP1);
         this.player2.socket.emit(SocketComands.NEXT_TURN, dataP2);
@@ -358,17 +400,18 @@ export namespace GameRoom {
         y: number;
         value: number;
 
-        constructor(x: number, y: number, value: number) {
+        constructor(x: number, y: number, value?: number) {
             this.x = x;
             this.y = y;
-            this.value = value;
+            this.value = value ?? -1;
         }
     }
 
     export class UserGameState {
         public field: Number[][];
-        public isTurn: boolean;
+        public currentPlayer: number;
         public countCheckersP1: number;
         public countCheckersP2: number;
+        public serverTime: number;
     }
 }

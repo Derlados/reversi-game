@@ -5,6 +5,7 @@ export default class Player {
     number: number;
     field: Array<Array<number>>;
     countCheckers: number;
+    timer: NodeJS.Timeout;
 
     constructor(socket: Socket, number: number) {
         this.socket = socket;

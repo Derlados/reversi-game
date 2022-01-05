@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
 import { Dimensions } from 'react-native';
 import Checker from '../general/Checker';
 import Colors from '../../constants/Colors';
-import { useSelector, useDispatch } from 'react-redux';
-import { makeTurn } from '../../redux/actions/GameActions'
+import { useSelector } from 'react-redux';
+import GameValue from '../../constants/GameValues';
 
 const windowWidth = Dimensions.get('window').width;
 
-const EMPTY = 0;
-const FIRST_PLAYER = 1;
-const SECOND_PLAYER = 2;
-const AVAILABLE_TURN = 3;
-
-export default function Field({ fieldSize }) {
+export default function Field({ fieldSize, onUserChoose }) {
     const field = useSelector(state => state.field);
-    const dispatch = useDispatch();
-    console.log(field);
+    const lastField = useSelector(state => state.lastField);
 
-    const tryMakeTurn = (x, y) => {
-        if (field[x][y] == AVAILABLE_TURN) {
-            dispatch(makeTurn(x, y));
+    const cells = [];
+    for (let i = 0; i < field.length; i++) {
+        cells[i] = [];
+    }
+
+    useEffect(() => {
+        for (let i = 0; i < field.length; i++) {
+            for (let j = 0; j < cells.length; j++) {
+                if ((field[i][j] == GameValue.FIRST_PLAYER && lastField[i][j] == GameValue.SECOND_PLAYER)
+                    || (field[i][j] == GameValue.SECOND_PLAYER && lastField[i][j] == GameValue.FIRST_PLAYER)) {
+                    cells[i][j].startAnim();
+                }
+            }
+        }
+    });
+
+    const checkUserChoice = (x, y) => {
+        if (field[x][y] == GameValue.AVAILABLE_TURN) {
+            onUserChoose(x, y);
         }
     }
 
@@ -32,7 +42,7 @@ export default function Field({ fieldSize }) {
                         <View key={indexRow} style={styles.row}>
                             {row.map((cell, indexColumn) => {
                                 return (
-                                    <TouchableWithoutFeedback key={`${indexRow}.${indexColumn}`} style={styles.cellContainer} onPress={() => tryMakeTurn(indexRow, indexColumn)} >
+                                    <TouchableWithoutFeedback key={`${indexRow}.${indexColumn}`} style={styles.cellContainer} onPress={() => checkUserChoice(indexRow, indexColumn)} >
                                         {createCell(cell, indexRow, indexColumn)}
                                     </TouchableWithoutFeedback>
                                 );
@@ -45,38 +55,36 @@ export default function Field({ fieldSize }) {
     }
 
     const createCell = (cellValue, row, column) => {
-
         const color = (row + column) % 2 == 0 ? styles.evenCell : styles.oddCell;
 
         switch (cellValue) {
-            case EMPTY: {
+            case GameValue.EMPTY: {
                 return (
-                    <View key={`${row}.${column}.${EMPTY}`} style={[styles.cell, color]}></View>
+                    <View style={[styles.cell, color]}></View>
                 );
             }
-            case FIRST_PLAYER: {
+            case GameValue.FIRST_PLAYER: {
                 return (
-                    <View key={`${row}.${column}.${FIRST_PLAYER}`} style={[styles.cell, color]} >
-                        <Checker initSide={Checker.BLACK_SIDE} />
+                    <View style={[styles.cell, color]} >
+                        <Checker ref={child => { cells[row][column] = child }} initSide={Checker.BLACK_SIDE} />
                     </View>
                 );
             }
-            case SECOND_PLAYER: {
+            case GameValue.SECOND_PLAYER: {
                 return (
-                    <View key={`${row}.${column}.${SECOND_PLAYER}`} style={[styles.cell, color]}>
-                        <Checker initSide={Checker.WHITE_SIDE} />
+                    <View style={[styles.cell, color]}>
+                        <Checker ref={child => { cells[row][column] = child }} initSide={Checker.WHITE_SIDE} />
                     </View>
                 );
             }
-            case AVAILABLE_TURN: {
+            case GameValue.AVAILABLE_TURN: {
                 return (
-                    <View key={`${row}.${column}.${AVAILABLE_TURN}`} style={[styles.cell, color]}>
+                    <View style={[styles.cell, color]}>
                         <View style={styles.prompt}></View>
                     </View>
                 );
             }
         }
-
     }
 
     return (

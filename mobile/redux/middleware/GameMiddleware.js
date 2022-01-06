@@ -6,6 +6,7 @@ const HOST = 'http://192.168.1.3:3000';
 let socket;
 
 export const gameMiddleware = (store) => (next) => (action) => {
+
     switch (action.type) {
         case GameActionTypes.CONNECT: {
             initSocket(next);
@@ -27,6 +28,10 @@ export const gameMiddleware = (store) => (next) => (action) => {
             socket.emit(SocketCommands.GIVE_UP);
             break;
         }
+        case GameActionTypes.RESET: {
+            socket = null;
+            next(action);
+        }
     }
 }
 
@@ -43,6 +48,6 @@ function initSocket(next) {
         next({ type: GameActionTypes.SET_TURN_TIME, payload: { time: time } });
     })
     socket.on(SocketCommands.END_GAME, (data) => {
-        //TODO
+        next({ type: GameActionTypes.END_GAME, payload: data });
     })
 }

@@ -6,10 +6,12 @@ import Colors from '../constants/Colors';
 import Field from '../components/game/Field';
 import PlayerRow from '../components/game/PlayerRow';
 import GameTimer from '../components/game/GameTimer';
+import ResultModal from '../components/game/ResultModal';
 import Header from '../components/general/Header';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect } from '../redux/actions/GameActions'
-import { makeTurn, turnTimeOut } from '../redux/actions/GameActions';
+import { makeTurn, turnTimeOut, leave } from '../redux/actions/GameActions';
+import Screens from '../constants/Screens';
 
 export default function Game({ navigation }) {
     const isConnected = useSelector(state => state.isConnected);
@@ -23,15 +25,20 @@ export default function Game({ navigation }) {
         dispatch(turnTimeOut());
     }
 
+    const backToHome = () => {
+        navigation.navigate(Screens.MENU);
+    }
+
     if (isConnected) {
         // Game 
         return (
             <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.game}>
+                <ResultModal onAccept={backToHome} />
                 <Header hasMenu={true} />
                 <View style={styles.gameContainer}>
                     <PlayerRow />
                     <Field fieldSize={8} onUserChoose={onUserChoose} />
-                    <GameTimer seconds={10} onTimeOut={onTimeOut} />
+                    <GameTimer seconds={2} onTimeOut={onTimeOut} />
                 </View>
             </ImageBackground>
         );
@@ -39,12 +46,14 @@ export default function Game({ navigation }) {
         dispatch(connect());
         // Loading ...
         return (
-            <View style={styles.screensaver}>
-                <AnimatedScreensaver />
-                <View style={styles.textContainer}>
-                    <AnimatedText loadingText={'Loading'} />
+            <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.game}>
+                <View style={styles.screensaver}>
+                    <AnimatedScreensaver />
+                    <View style={styles.textContainer}>
+                        <AnimatedText loadingText={'Loading'} />
+                    </View>
                 </View>
-            </View>
+            </ImageBackground>
 
         );
     }
@@ -54,8 +63,7 @@ const styles = StyleSheet.create({
     screensaver: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: Colors.primaryBackgroundBlue
+        justifyContent: 'center'
     },
     textContainer: {
         marginTop: 25

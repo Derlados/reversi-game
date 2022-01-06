@@ -16,3 +16,6 @@ export const giveUp = function () {
     return { type: GameActionTypes.GIVE_UP, payload: {} }
 }
 
+export const reset = function () {
+    return { type: GameActionTypes.RESET, payload: {} }
+}

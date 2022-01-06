@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback } fr
 import Colors from '../../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function MenuButton({ text, onPress, initDelay }) {
+export default function MenuButton({ text, onPress, initDelay = 0 }) {
     const widthAnimVal = new Animated.Value(0);
     const widthInterpolate = widthAnimVal.interpolate({
         inputRange: [0, 1],

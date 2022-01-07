@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Colors from '../../constants/Colors';
+import Colors from '../../values/colors';
 import { useIsMounted } from 'usehooks-ts'
 
 export default function AnimatedText({ loadingText }) {

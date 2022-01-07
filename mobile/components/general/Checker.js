@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
 import { Dimensions } from 'react-native';
-import Colors from '../../constants/Colors';
+import Colors from '../../values/colors';
 import GameValues from '../../constants/GameValues';
 
 export default class Checker extends React.Component {

@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, TouchableWithoutFeedback } from 'react-native';
 import { Dimensions } from 'react-native';
 import Checker from '../general/Checker';
-import Colors from '../../constants/Colors';
 import { useSelector } from 'react-redux';
 import GameValue from '../../constants/GameValues';
 

@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
-import Colors from '../../constants/Colors';
+import Colors from '../../values/colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { gradients } from '../../values/gradients';
 
-export default function MenuButton({ text, onPress, initDelay = 0 }) {
+export default function MenuButton({ text, onPress, initDelay = 0, initAnimate = true }) {
     const widthAnimVal = new Animated.Value(0);
     const widthInterpolate = widthAnimVal.interpolate({
         inputRange: [0, 1],
-        outputRange: ['0%', '80%']
+        outputRange: ['0%', '100%']
     });
-    const AnimatedView = Animated.createAnimatedComponent(LinearGradient);
+    const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
     const heightAnimVal = new Animated.Value(1);
     const heightInterpolate = heightAnimVal.interpolate({
@@ -48,16 +49,22 @@ export default function MenuButton({ text, onPress, initDelay = 0 }) {
         ]).start();
     }
 
-    setTimeout(() => {
-        initAnim();
-    }, initDelay);
+    if (initAnimate) {
+        setTimeout(() => {
+            initAnim();
+        }, initDelay);
+    } else {
+        widthAnimVal.setValue(1);
+        opacityAnimVal.setValue(1);
+    }
+
 
     return (
         <TouchableWithoutFeedback onPressIn={onPressInAnim} onPressOut={onPressOutAnim} onPress={onPress}>
             <View style={styles.buttonContainer}>
-                <AnimatedView style={[styles.button, { height: heightInterpolate, width: widthInterpolate, color: heightInterpolate }]} colors={gradients.button}>
+                <AnimatedLinearGradient style={[styles.button, { height: heightInterpolate, width: widthInterpolate, color: heightInterpolate }]} colors={gradients.button}>
                     <Animated.Text style={[styles.buttonText, { fontSize: fontInterpolate, opacity: opacityAnimVal }]}>{text}</Animated.Text>
-                </AnimatedView>
+                </AnimatedLinearGradient>
             </View>
         </TouchableWithoutFeedback>
     );
@@ -84,10 +91,6 @@ const animationConfigs = {
     }
 }
 
-const gradients = {
-    button: [Colors.primaryGreen, '#009b5a']
-};
-
 const styles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
@@ -112,6 +115,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'white',
         fontFamily: 'Poppins-Black',
-
     },
 });

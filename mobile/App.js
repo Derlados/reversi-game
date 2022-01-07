@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Screens from './constants/Screens';
@@ -19,6 +19,10 @@ const loadFonts = () => Font.loadAsync({
 
 export default function App() {
   const [isLoadFont, setIsLoadFont] = useState(false);
+  useEffect(() => {
+    StatusBar.setHidden(true);
+    StatusBar.setBackgroundColor('#00000000');
+  });
 
   if (isLoadFont) {
     return (

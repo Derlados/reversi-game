@@ -1,4 +1,4 @@
-import ActionTypes from '../actions/GameActionTypes';
+import GameActionTypes from '../actions/GameActionTypes';
 import { createStore, applyMiddleware } from 'redux';
 import { gameMiddleware } from '../middleware/GameMiddleware';
 import GameValues from '../../constants/GameValues';
@@ -19,13 +19,13 @@ const initialStore = {
 
 const gameReducer = function (state = initialStore, action) {
     switch (action.type) {
-        case ActionTypes.CONNECT: {
+        case GameActionTypes.CONNECT: {
             return { ...state, isConnected: false }
         }
-        case ActionTypes.SET_CONNECTION: {
+        case GameActionTypes.SET_CONNECTION: {
             return { ...state, roomId: action.payload.roomId, isConnected: true }
         }
-        case ActionTypes.SET_GAME_STATE: {
+        case GameActionTypes.SET_GAME_STATE: {
             const gameState = action.payload;
             const lastField = state.field.length == 0 ? gameState.field : state.field;
 
@@ -39,10 +39,10 @@ const gameReducer = function (state = initialStore, action) {
                 countCheckersP2: gameState.countCheckersP2
             };
         }
-        case ActionTypes.SET_TURN_TIME: {
+        case GameActionTypes.SET_TURN_TIME: {
             return { ...state, serverTime: action.payload.time }
         }
-        case ActionTypes.END_GAME: {
+        case GameActionTypes.END_GAME: {
             const lastGameState = action.payload.lastGameState;
             const lastField = state.field.length == 0 ? lastGameState.field : state.field;
 
@@ -55,7 +55,7 @@ const gameReducer = function (state = initialStore, action) {
                 countCheckersP2: lastGameState.countCheckersP2
             }
         }
-        case ActionTypes.RESET: {
+        case GameActionTypes.RESET: {
             return initialStore;
         }
         default:

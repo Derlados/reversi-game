@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Dimensions } from 'react-native';
 import Checker from '../general/Checker';
 import { useIsMounted } from 'usehooks-ts';
-import Colors from '../../constants/Colors';
+import Colors from '../../values/colors';
 
 const windowWidth = Dimensions.get('window').width;
 

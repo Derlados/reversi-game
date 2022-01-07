@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Image } from 'react-native';
+import { StyleSheet, View, Image, TouchableWithoutFeedback } from 'react-native';
+import Screens from '../../constants/Screens';
 
-export default function Header({ hasMenu }) {
+export default function Header({ navigation, hasMenu }) {
     const [isVolume, setIsVolume] = useState(false);
 
     return (
         <View style={styles.container}>
-            <View>
-                {hasMenu ? <Image style={styles.icon} source={require('../../assets/images/burger-bar.png')} /> : null}
-            </View>
-            <View>
+
+            {hasMenu ?
+                <TouchableWithoutFeedback onPress={() => setIsModalVisible(true)}>
+                    <Image style={styles.icon} source={require('../../assets/images/burger-bar.png')} />
+                </TouchableWithoutFeedback>
+                :
+                <View></View>
+            }
+            <TouchableWithoutFeedback>
                 <Image style={styles.icon} source={isVolume ? require('../../assets/images/volume.png') : require('../../assets/images/mute.png')} />
-            </View>
-        </View>
+            </TouchableWithoutFeedback>
+        </View >
     );
 }
 

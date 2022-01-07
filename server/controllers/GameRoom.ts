@@ -16,13 +16,13 @@ import Player from "../types/Player";
       чьих фишек на доске выставлено больше, объявляется победителем. В случае равенства количества фишек засчитывается ничья.
  */
 export class GameRoom {
-    private static BASIC_SIZE_FIELD = 4;
+    private static BASIC_SIZE_FIELD = 8;
 
     private EMPTY = 0;
     private FIRST_PLAYER = 1;
     private SECOND_PLAYER = 2;
     private AVAILABLE_TURN = 3;
-    private TURN_TIME_SEC = 2;
+    private TURN_TIME_SEC = 60;
 
     private timer: NodeJS.Timer;
     private currentTime = this.TURN_TIME_SEC;
@@ -386,6 +386,7 @@ export class GameRoom {
                     break;
                 } else if (cells[i].value == player.number && isOpponentFound) {
                     rightDirectionCells.push(cells.slice(0, i));
+                    break;
                 }
             }
         }

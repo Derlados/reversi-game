@@ -70,9 +70,20 @@ export default class GameController {
         this.gameRooms.delete(roomId);
     }
 
+    /**
+     * Создание новой комнаты. Первый игрок является создателем комнаты, потому id комнаты генерируется от id его сокета.
+     * В случае дисконекта пользователя, во время ожидания, комната будет удалена
+     * @param socket - сокет первого игрока, для которого создается комната
+     */
     private crateRoom(socket: Socket) {
         const newRoomId = crypto.createHash('sha256').update(socket.id).digest('hex');
         this.gameRooms.set(newRoomId, new GameRoom(newRoomId, socket, (roomId) => { this.clearRoom(roomId) }));
+
+        socket.on(SocketComands.DISCONNECT, () => {
+            if (this.gameRooms.get(newRoomId).isWaiting) {
+                this.clearRoom(newRoomId);
+            }
+        })
     }
 }
 

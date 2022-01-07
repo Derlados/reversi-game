@@ -1,12 +1,13 @@
-import React from 'react';
-import { StyleSheet, ImageBackground, View } from 'react-native';
+import React, { useState, useEffect, createRef } from 'react';
+import { StyleSheet, ImageBackground, View, BackHandler } from 'react-native';
 import AnimatedScreensaver from '../components/screensaver/AnimatedScreebsaver';
 import AnimatedText from '../components/screensaver/AnimatedText';
-import Colors from '../constants/Colors';
+import Colors from '../values/colors';
 import Field from '../components/game/Field';
 import PlayerRow from '../components/game/PlayerRow';
 import GameTimer from '../components/game/GameTimer';
 import ResultModal from '../components/game/ResultModal';
+import AlertModal from '../components/general/AlertModal';
 import Header from '../components/general/Header';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect } from '../redux/actions/GameActions'
@@ -16,6 +17,23 @@ import Screens from '../constants/Screens';
 export default function Game({ navigation }) {
     const isConnected = useSelector(state => state.isConnected);
     const dispatch = useDispatch();
+    let backHandler;
+    let alertModal = createRef();
+
+    useEffect(() => {
+        if (isConnected) {
+            backHandler = BackHandler.addEventListener("hardwareBackPress", backHandle);
+        }
+
+        return () => {
+            // backHandler.remove();
+        }
+    });
+
+    const backHandle = () => {
+        alertModal.current.openModal();
+        return true;
+    }
 
     const onUserChoose = (x, y) => {
         dispatch(makeTurn(x, y));
@@ -29,16 +47,25 @@ export default function Game({ navigation }) {
         navigation.navigate(Screens.MENU);
     }
 
+    const unPause = () => {
+
+    }
+
     if (isConnected) {
         // Game 
         return (
             <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.game}>
                 <ResultModal onAccept={backToHome} />
-                <Header hasMenu={true} />
+                <AlertModal
+                    ref={alertModal}
+                    title="Are you sure you want to leave ?"
+                    positiveButton={{ label: 'Yes', onPress: backToHome }}
+                    negativeButton={{ label: 'No', onPress: unPause }} />
+                <Header hasMenu={true} navigation={navigation} />
                 <View style={styles.gameContainer}>
                     <PlayerRow />
                     <Field fieldSize={8} onUserChoose={onUserChoose} />
-                    <GameTimer seconds={2} onTimeOut={onTimeOut} />
+                    <GameTimer seconds={60} onTimeOut={onTimeOut} />
                 </View>
             </ImageBackground>
         );

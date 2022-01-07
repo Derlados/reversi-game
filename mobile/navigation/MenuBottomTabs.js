@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Menu from '../screens/Menu';
 import Settings from '../screens/Settings';
 import { Dimensions } from 'react-native';
-import Colors from '../constants/Colors';
+import Colors from '../values/colors';
 
 const Tab = createBottomTabNavigator();
 const windowWidth = Dimensions.get('window').width;

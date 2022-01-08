@@ -5,7 +5,7 @@ import Checker from '../general/Checker';
 import { useSelector } from 'react-redux';
 import GameValues from '../../constants/GameValues';
 
-export default function GameTimer({ seconds }) {
+export default function GameTimer({ seconds, onTimeOut }) {
     const currentPlayer = useSelector(state => state.currentPlayer);
     let time = useSelector(state => state.serverTime);
 

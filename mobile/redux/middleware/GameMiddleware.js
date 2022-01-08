@@ -25,7 +25,6 @@ export const gameMiddleware = (store) => (next) => (action) => {
             break;
         }
         case GameActionTypes.GIVE_UP: {
-            //TODO
             socket.emit(SocketCommands.GIVE_UP);
             break;
         }

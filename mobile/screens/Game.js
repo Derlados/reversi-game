@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createRef } from 'react';
-import { StyleSheet, ImageBackground, View, BackHandler } from 'react-native';
+import { StyleSheet, ImageBackground, View, BackHandler, Platform } from 'react-native';
 import AnimatedScreensaver from '../components/screensaver/AnimatedScreebsaver';
 import AnimatedText from '../components/screensaver/AnimatedText';
 import Colors from '../values/colors';
@@ -11,7 +11,7 @@ import AlertModal from '../components/general/AlertModal';
 import Header from '../components/general/Header';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect } from '../redux/actions/GameActions'
-import { makeTurn, turnTimeOut, leave } from '../redux/actions/GameActions';
+import { makeTurn, turnTimeOut, giveUp } from '../redux/actions/GameActions';
 import Screens from '../constants/Screens';
 
 export default function Game({ navigation }) {
@@ -20,15 +20,17 @@ export default function Game({ navigation }) {
     let backHandler;
     let alertModal = createRef();
 
-    useEffect(() => {
-        if (isConnected) {
-            backHandler = BackHandler.addEventListener("hardwareBackPress", backHandle);
-        }
+    if (Platform.OS == 'android') {
+        useEffect(() => {
+            if (isConnected) {
+                backHandler = BackHandler.addEventListener("hardwareBackPress", backHandle);
+            }
 
-        return () => {
-            // backHandler.remove();
-        }
-    });
+            return () => {
+                backHandler.remove();
+            }
+        });
+    }
 
     const backHandle = () => {
         alertModal.current.openModal();
@@ -51,6 +53,10 @@ export default function Game({ navigation }) {
 
     }
 
+    const onGiveUp = () => {
+        dispatch(giveUp());
+    }
+
     if (isConnected) {
         // Game 
         return (
@@ -61,7 +67,7 @@ export default function Game({ navigation }) {
                     title="Are you sure you want to leave ?"
                     positiveButton={{ label: 'Yes', onPress: backToHome }}
                     negativeButton={{ label: 'No', onPress: unPause }} />
-                <Header hasMenu={true} navigation={navigation} />
+                <Header buttonList={[{ label: "Give up", onPress: onGiveUp }]} />
                 <View style={styles.gameContainer}>
                     <PlayerRow />
                     <Field fieldSize={8} onUserChoose={onUserChoose} />

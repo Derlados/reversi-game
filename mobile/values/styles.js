@@ -44,7 +44,8 @@ export const modalStyle = StyleSheet.create({
         alignItems: 'center',
         width: '95%',
         backgroundColor: Colors.primaryBackgroundGreen,
-        borderRadius: 25
+        borderRadius: 25,
+        padding: 15
     },
     text: {
         ...gStyle.text,

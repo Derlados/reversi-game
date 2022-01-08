@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback } from 'react-native';
-import Colors from '../../values/colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { gradients } from '../../values/gradients';
 
-export default function MenuButton({ text, onPress, initDelay = 0, initAnimate = true }) {
+export default function MenuButton({ style = {}, text, onPress, initDelay = 0, initAnimate = true }) {
     const widthAnimVal = new Animated.Value(0);
     const widthInterpolate = widthAnimVal.interpolate({
         inputRange: [0, 1],
@@ -61,7 +60,7 @@ export default function MenuButton({ text, onPress, initDelay = 0, initAnimate =
 
     return (
         <TouchableWithoutFeedback onPressIn={onPressInAnim} onPressOut={onPressOutAnim} onPress={onPress}>
-            <View style={styles.buttonContainer}>
+            <View style={[styles.buttonContainer, style]}>
                 <AnimatedLinearGradient style={[styles.button, { height: heightInterpolate, width: widthInterpolate, color: heightInterpolate }]} colors={gradients.button}>
                     <Animated.Text style={[styles.buttonText, { fontSize: fontInterpolate, opacity: opacityAnimVal }]}>{text}</Animated.Text>
                 </AnimatedLinearGradient>
@@ -93,11 +92,9 @@ const animationConfigs = {
 
 const styles = StyleSheet.create({
     buttonContainer: {
-        width: '100%',
-        height: 60,
-        marginBottom: 25,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        height: 60
     },
     button: {
         borderRadius: 40,

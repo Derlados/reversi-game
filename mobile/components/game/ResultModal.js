@@ -15,6 +15,7 @@ const results = new Map();
 results.set(GameValues.VICTORY, "You win !");
 results.set(GameValues.LOSE, "You lose");
 results.set(GameValues.DRAW, "Draw");
+results.set(GameValues.VICTORY_OPONENT_LEFT, "You win. Your opponent has left the game");
 
 export default function ResultModal({ onAccept }) {
     const result = useSelector(state => state.result);
@@ -65,7 +66,7 @@ export default function ResultModal({ onAccept }) {
                             <Text style={[styles.text, styles.smallText, { color: 'black' }]}>{countCheckers[1]}</Text>
                         </View>
                     </View>
-                    <AnimatedButton text="Back to home" onPress={() => { onAccept(); setModalVisible(false); }} />
+                    <AnimatedButton style={styles.button} text="Back to home" onPress={() => { onAccept(); setModalVisible(false); }} />
                 </Animated.View>
             </View>
         </Modal>
@@ -86,15 +87,16 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
         alignItems: 'center',
         width: '95%',
-        height: 250,
         backgroundColor: Colors.primaryBackgroundGreen,
         borderRadius: 25
     },
     text: {
         ...gStyle.text,
-        fontSize: 36,
+        fontSize: 24,
         color: Colors.secondaryGreen,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center',
+        margin: 10
     },
     smallText: {
         fontSize: 24,
@@ -111,5 +113,10 @@ const styles = StyleSheet.create({
     checkersResult: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    button: {
+        width: '80%',
+        marginTop: 10,
+        marginBottom: 20
     }
 });

@@ -19,10 +19,10 @@ export default function Menu({ navigation }) {
         <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.container}>
             <Header hasMenu={false} />
             <Image style={styles.logo} source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png' }} />
-            <View style={styles.buttons}>
-                <AnimatedButton text="Multiplayer" initDelay={200} onPress={startGame} />
-                <AnimatedButton text="Player vs AI" initDelay={400} />
-                <AnimatedButton text="Player vs Player" initDelay={600} />
+            <View style={styles.buttonsColumn}>
+                <AnimatedButton style={styles.button} text="Multiplayer" initDelay={200} onPress={startGame} />
+                <AnimatedButton style={styles.button} text="Player vs AI" initDelay={400} />
+                <AnimatedButton style={styles.button} text="Player vs Player" initDelay={600} />
             </View>
 
         </ImageBackground>
@@ -43,7 +43,10 @@ const styles = StyleSheet.create({
         height: '30%',
         marginBottom: 50
     },
-    buttons: {
+    buttonsColumn: {
         width: '80%',
+    },
+    button: {
+        marginBottom: 25,
     }
 });

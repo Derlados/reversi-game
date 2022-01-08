@@ -77,7 +77,7 @@ export class GameRoom {
      * Обработка окончания игры
      * @param additionalDesc - опциональный параметр, в котором коротко описана причина окончания игры
      */
-    public endGame(additionalDesc?: string) {
+    public endGame(leftPlayer?: Player) {
         this.calculateCheckers();
 
         let countCheckersP1 = 0;
@@ -88,19 +88,24 @@ export class GameRoom {
         const lastGameState = {
             field: this.field,
             countCheckersP1: countCheckersP1,
-            countCheckersP2: countCheckersP2,
-            additionalDesc: additionalDesc
+            countCheckersP2: countCheckersP2
         }
 
-        if (this.player1.countCheckers > this.player2.countCheckers) {
-            this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.VICTORY, lastGameState: lastGameState });
-            this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.LOSE, lastGameState: lastGameState });
-        } else if (this.player1.countCheckers < this.player2.countCheckers) {
-            this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.LOSE, lastGameState: lastGameState });
-            this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.VICTORY, lastGameState: lastGameState });
+        if (!leftPlayer) {
+            if (this.player1.countCheckers > this.player2.countCheckers) {
+                this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.VICTORY, lastGameState: lastGameState });
+                this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.LOSE, lastGameState: lastGameState });
+            } else if (this.player1.countCheckers < this.player2.countCheckers) {
+                this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.LOSE, lastGameState: lastGameState });
+                this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.VICTORY, lastGameState: lastGameState });
+            } else {
+                this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.DRAW, lastGameState: lastGameState });
+                this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.DRAW, lastGameState: lastGameState });
+            }
         } else {
-            this.player1.socket.emit(SocketComands.END_GAME, { result: GameResult.DRAW, lastGameState: lastGameState });
-            this.player2.socket.emit(SocketComands.END_GAME, { result: GameResult.DRAW, lastGameState: lastGameState });
+            const connectedPlayer = this.player1.socket.id == leftPlayer.socket.id ? this.player2 : this.player1;
+            connectedPlayer.socket.emit(SocketComands.END_GAME, { result: GameResult.VICTORY_OPONENT_LEFT, lastGameState: lastGameState });
+            leftPlayer.socket.emit(SocketComands.END_GAME, { result: GameResult.LOSE, lastGameState: lastGameState });
         }
 
         this.player1.socket.removeAllListeners(SocketComands.DISCONNECT);
@@ -110,18 +115,6 @@ export class GameRoom {
         this.deleteRoom(this.roomId);
     }
 
-    //TODO по хорошему нужно доделать подключение к существующей игре (в течении минуты)
-    /**
-     * Окончание игры по причине дисконекта одно из пользователей
-     * @param disconnectedPlayerId 
-     */
-    private endGameDisconnect(disconnectedPlayerId: string) {
-        const connectedPlayer = disconnectedPlayerId == this.player1.socket.id ? this.player2 : this.player1;
-        connectedPlayer.socket.emit(SocketComands.END_GAME_DISCONNECT, { desc: 'oponnent disconnected' });
-        connectedPlayer.socket.removeAllListeners(SocketComands.DISCONNECT);
-        connectedPlayer.socket.disconnect();
-        this.deleteRoom(this.roomId);
-    }
 
     /**
      * Инициализация слушателей сокета игрока
@@ -138,10 +131,11 @@ export class GameRoom {
             }
         });
         player.socket.on(SocketComands.GIVE_UP, () => {
-            this.endGame(`game ended - opponent gave up`);
+            this.endGame(player);
         });
+        //TODO по хорошему нужно доделать повторное подключение к существующей игре (в течении минуты)
         player.socket.on(SocketComands.DISCONNECT, () => {
-            this.endGameDisconnect(player.socket.id);
+            this.endGame(player);
         });
     }
 

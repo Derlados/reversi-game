@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
+import { StyleSheet, Text, Animated, Easing, View } from 'react-native';
 import Colors from '../../values/colors';
 import Checker from '../general/Checker';
 import { useSelector } from 'react-redux';
 import GameValues from '../../constants/GameValues';
+import { gStyle } from '../../values/styles';
 
 export default function GameTimer({ seconds, onTimeOut }) {
     const currentPlayer = useSelector(state => state.currentPlayer);
@@ -36,7 +37,7 @@ export default function GameTimer({ seconds, onTimeOut }) {
         <View style={styles.container}>
             <View style={styles.counterContainer}>
                 <Checker ref={child => { checker = child }} />
-                <Text style={[styles.counterText, { color: currentPlayer == GameValues.FIRST_PLAYER ? 'white' : 'black' }]}>{time}</Text>
+                <Text style={[[gStyle.text, styles.counterText], { color: currentPlayer == GameValues.FIRST_PLAYER ? 'white' : 'black' }]}>{time}</Text>
             </View>
             <Animated.View style={[styles.timerLine, { flex: flexInterpolate }]}></Animated.View>
         </View>
@@ -50,6 +51,7 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         width: '100%',
         height: 60,
+        color: '#fff'
     },
     counterContainer: {
         alignItems: 'center',
@@ -59,8 +61,6 @@ const styles = StyleSheet.create({
     },
     counterText: {
         position: 'absolute',
-        fontSize: 16,
-        fontFamily: 'Poppins-Black',
         zIndex: 1
     },
     timerLine: {

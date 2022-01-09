@@ -14,7 +14,8 @@ import { Provider } from 'react-redux';
 const Stack = createStackNavigator();
 
 const loadFonts = () => Font.loadAsync({
-  'Poppins-Black': require('./assets/fonts/Poppins-SemiBold.ttf')
+  'Poppins-Black': require('./assets/fonts/Poppins-Black.ttf'),
+  'Poppins-SemiBold': require('./assets/fonts/Poppins-SemiBold.ttf')
 });
 
 export default function App() {

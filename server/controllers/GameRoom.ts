@@ -55,7 +55,6 @@ export class GameRoom {
         this.field[fieldSize / 2][fieldSize / 2 - 1] = this.SECOND_PLAYER;
         this.field[fieldSize / 2 - 1][fieldSize / 2 - 1] = this.FIRST_PLAYER;
         this.field[fieldSize / 2][fieldSize / 2] = this.FIRST_PLAYER;
-
     }
 
     public addSecondPlayer(player2: Socket) {

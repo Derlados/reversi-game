@@ -111,6 +111,6 @@ const styles = StyleSheet.create({
     buttonText: {
         textAlign: 'center',
         color: 'white',
-        fontFamily: 'Poppins-Black',
+        fontFamily: 'Poppins-SemiBold',
     },
 });

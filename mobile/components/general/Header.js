@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Image, Text, TouchableWithoutFeedback, Modal } from 'react-native';
 import Screens from '../../constants/Screens';
 import AnimatedButton from './AnimatedButton';
-import { modalStyle } from '../../values/styles';
+import { gStyle, modalStyle } from '../../values/styles';
+import Rules from '../../screens/Rules';
+import Colors from '../../values/colors';
 
 /**
  * 
@@ -13,11 +15,14 @@ import { modalStyle } from '../../values/styles';
  */
 export default function Header({ buttonList = [] }) {
     const [isVolume, setIsVolume] = useState(false);
+    const [isRulesVisible, setIsRulesVisible] = useState(false);
     const [isMenuVisible, setIsMenuVisible] = useState(false);
 
     const resume = () => {
         setIsMenuVisible(false);
     }
+
+
 
     return (
         <View style={styles.container}>
@@ -42,9 +47,17 @@ export default function Header({ buttonList = [] }) {
                     </View>
                 </View>
             </Modal>
-            <TouchableWithoutFeedback onPress={() => setIsVolume(true)}>
-                <Image style={styles.icon} source={isVolume ? require('../../assets/images/volume.png') : require('../../assets/images/mute.png')} />
-            </TouchableWithoutFeedback>
+            <Modal transparent={true} visible={isRulesVisible} statusBarTranslucent>
+                <Rules onClose={() => setIsRulesVisible(false)} />
+            </Modal>
+            <View style={gStyle.row}>
+                <TouchableWithoutFeedback onPress={() => setIsRulesVisible(true)}>
+                    <Image style={styles.icon} source={require('../../assets/images/question-mark-draw.png')} />
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback onPress={() => setIsVolume(!isVolume)} >
+                    <Image style={styles.icon} source={isVolume ? require('../../assets/images/volume.png') : require('../../assets/images/mute.png')} />
+                </TouchableWithoutFeedback>
+            </View>
         </View >
     );
 }
@@ -59,6 +72,8 @@ const styles = StyleSheet.create({
     icon: {
         height: 30,
         width: 30,
+        marginStart: 2,
+        marginEnd: 2,
     },
     title: {
         marginBottom: 10,

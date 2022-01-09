@@ -6,7 +6,14 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export const gStyle = StyleSheet.create({
+    row: {
+        flexDirection: 'row',
+    },
     text: {
+        fontSize: 16,
+        fontFamily: 'Poppins-SemiBold'
+    },
+    boldText: {
         fontSize: 16,
         fontFamily: 'Poppins-Black'
     },

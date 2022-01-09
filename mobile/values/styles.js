@@ -2,8 +2,8 @@ import { StyleSheet } from 'react-native';
 import { Dimensions } from 'react-native';
 import Colors from './colors';
 
-const windowWidth = Dimensions.get('window').width;
-const windowHeight = Dimensions.get('window').height;
+export const windowWidth = Dimensions.get('window').width;
+export const windowHeight = Dimensions.get('window').height;
 
 export const gStyle = StyleSheet.create({
     row: {

@@ -4,10 +4,15 @@ import { Dimensions } from 'react-native';
 import Checker from '../general/Checker';
 import { useSelector } from 'react-redux';
 import GameValue from '../../constants/GameValues';
+// import Sound from 'react-native-sound';
+// import turn from '../assets/sound/turn.mp3';
 
 const windowWidth = Dimensions.get('window').width;
 
 export default function Field({ fieldSize, onUserChoose }) {
+    // Sound.setCategory('Playback');
+    // const turnSound = new Sound(turn);
+
     const field = useSelector(state => state.field);
     const lastField = useSelector(state => state.lastField);
 
@@ -15,6 +20,7 @@ export default function Field({ fieldSize, onUserChoose }) {
     for (let i = 0; i < field.length; i++) {
         cells[i] = [];
     }
+
 
     useEffect(() => {
         for (let i = 0; i < field.length; i++) {

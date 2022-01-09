@@ -14,6 +14,7 @@ import { connect } from '../redux/actions/GameActions'
 import { makeTurn, turnTimeOut, giveUp } from '../redux/actions/GameActions';
 import Screens from '../constants/Screens';
 
+
 export default function Game({ navigation }) {
     const isConnected = useSelector(state => state.isConnected);
     const dispatch = useDispatch();

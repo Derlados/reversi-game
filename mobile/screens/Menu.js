@@ -4,8 +4,10 @@ import { ImageBackground, StyleSheet, View, Image } from 'react-native';
 import AnimatedButton from '../components/general/AnimatedButton';
 import Screens from '../constants/Screens'
 import Header from '../components/general/Header';
+import Logo from '../components/general/Logo';
 import { useDispatch } from 'react-redux';
 import { reset } from '../redux/actions/GameActions';
+
 
 export default function Menu({ navigation }) {
     const dispatch = useDispatch();
@@ -15,10 +17,14 @@ export default function Menu({ navigation }) {
         dispatch(reset());
     }
 
+
+
     return (
         <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.container}>
-            <Header hasMenu={false} />
-            <Image style={styles.logo} source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/1200px-React-icon.svg.png' }} />
+            <View style={styles.head}>
+                <Header hasMenu={false} />
+            </View>
+            <Logo />
             <View style={styles.buttonsColumn}>
                 <AnimatedButton style={styles.button} text="Multiplayer" initDelay={200} onPress={startGame} />
                 <AnimatedButton style={styles.button} text="Player vs AI" initDelay={400} />
@@ -30,10 +36,16 @@ export default function Menu({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+    head: {
+        position: 'absolute',
+        width: '100%',
+        top: 0,
+        zIndex: 1,
+    },
     container: {
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'center',
         height: '100%',
         width: '100%',
         backgroundColor: Colors.primaryBackgroundGreen

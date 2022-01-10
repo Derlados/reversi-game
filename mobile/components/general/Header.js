@@ -33,7 +33,7 @@ export default function Header({ buttonList = [] }) {
                 :
                 <View></View>
             }
-            <Modal transparent={true} visible={isMenuVisible}>
+            <Modal transparent={true} visible={isMenuVisible} statusBarTranslucent >
                 <View style={modalStyle.container}>
                     <View style={modalStyle.modalContainer}>
                         <Text style={[modalStyle.text, styles.title]}>Game Menu</Text>
@@ -47,7 +47,7 @@ export default function Header({ buttonList = [] }) {
                     </View>
                 </View>
             </Modal>
-            <Modal transparent={true} visible={isRulesVisible} statusBarTranslucent>
+            <Modal transparent={true} visible={isRulesVisible} statusBarTranslucent animationType='slide'>
                 <Rules onClose={() => setIsRulesVisible(false)} />
             </Modal>
             <View style={gStyle.row}>

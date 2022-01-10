@@ -28,7 +28,10 @@ export default function Game({ navigation }) {
             }
 
             return () => {
-                backHandler.remove();
+                if (isConnected) {
+                    backHandler.remove();
+                }
+
             }
         });
     }

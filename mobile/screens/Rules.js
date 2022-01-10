@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, View, Text, Image, ScrollView, TouchableWithoutFeedback, StatusBar } from 'react-native';
 import { gStyle } from '../values/styles';
 import { Dimensions } from 'react-native';
 import Colors from '../values/colors';
@@ -7,14 +7,11 @@ import Colors from '../values/colors';
 const windowWidth = Dimensions.get('window').width;
 
 export default function Rules({ onClose }) {
+    StatusBar.setTranslucent(true)
 
     return (
-        <ScrollView style={styles.container}>
-            <TouchableWithoutFeedback onPress={onClose}>
-                <Image style={styles.icon} source={require('../assets/images/close.png')} />
-            </TouchableWithoutFeedback>
-
-            <View style={styles.content}>
+        <ScrollView style={styles.container} >
+            <View style={styles.inner} showsVerticalScrollIndicator={false}>
                 <Text style={[gStyle.boldText, styles.title]}>Game rules</Text>
                 <Text style={[gStyle.text, styles.description]}>Reversi is a two-player strategy game played on an 8x8 board using discs that are colored white on one side and black on the other. One player plays the discs black side up while his opponent plays the discs white side up.</Text>
 
@@ -33,24 +30,31 @@ export default function Rules({ onClose }) {
 
                 <Text style={[gStyle.boldText, styles.title]}>End game</Text>
                 <Text style={[gStyle.text, styles.description]}>The game ends when neither player can make a legal move. This includes when there are no more empty squares on the board or if one player has flipped over all of his opponent's discs. The player with the most discs of his color on the board at the end of the game wins. The game is a draw if both players have the same number of discs.</Text>
+
             </View>
+            <TouchableWithoutFeedback onPress={onClose}>
+                <Image style={styles.icon} source={require('../assets/images/close.png')} />
+            </TouchableWithoutFeedback>
+
+
         </ScrollView >
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        padding: 10,
-    },
-    content: {
+        margin: 10,
         backgroundColor: Colors.primaryBackgroundGreen,
+        borderColor: Colors.secondaryGreen,
+        borderWidth: 3,
+        borderRadius: 10,
+    },
+    inner: {
         alignItems: "center",
         width: "100%",
         padding: 10,
-        borderRadius: 10,
-        borderColor: Colors.secondaryGreen,
-        borderWidth: 3,
+        zIndex: 1,
+        marginBottom: 20
     },
     title: {
         color: Colors.secondaryGreen,
@@ -64,7 +68,6 @@ const styles = StyleSheet.create({
     img: {
         width: windowWidth * 0.78,
         height: windowWidth * 0.78,
-        textAlign: 'center',
         marginBottom: 10,
     },
     icon: {
@@ -73,7 +76,7 @@ const styles = StyleSheet.create({
         right: 15,
         width: 25,
         height: 25,
-        zIndex: 1,
+        zIndex: 2,
         tintColor: Colors.primaryGreen
     },
 });

@@ -2,8 +2,8 @@ import { io } from 'socket.io-client';
 import SocketCommands from '../../constants/SocketCommands';
 import GameActionTypes from '../actions/GameActionTypes';
 
-// const HOST = 'https://glacial-brushlands-19520.herokuapp.com/';
-const HOST = 'http://192.168.1.3:3000';
+const HOST = 'https://glacial-brushlands-19520.herokuapp.com/';
+// const HOST = 'http://192.168.1.3:3000';
 let socket;
 
 export const gameMiddleware = (store) => (next) => (action) => {

@@ -4,6 +4,7 @@ import SocketCommands from '../../constants/SocketCommands';
 import GameActionTypes from '../actions/GameActionTypes';
 import { GameLogic } from './GameLogic';
 import { makeTurn } from '../actions/GameActions';
+import Timer from '../../utils/Timer';
 
 // const HOST = 'https://glacial-brushlands-19520.herokuapp.com/';
 const HOST = 'http://192.168.1.3:3000';
@@ -24,12 +25,13 @@ export const gameMiddleware = (store) => (next) => (action) => {
     }
 }
 
-const TURN_TIME_SEC = 5;
+const TURN_TIME_SEC = 60;
 let currentTime = TURN_TIME_SEC;
 let timer;
 let gameLogic = new GameLogic();
 
 function localProcess(store, next, action) {
+    console.log(action.type);
     switch (action.type) {
         case GameActionTypes.CONNECT: {
             gameLogic = new GameLogic();
@@ -41,7 +43,7 @@ function localProcess(store, next, action) {
             break;
         }
         case GameActionTypes.NEXT_TURN: {
-            clearTimeout(timer);
+            timer.pause();
             currentTime = TURN_TIME_SEC;
 
             const x = action.payload.x;
@@ -57,15 +59,19 @@ function localProcess(store, next, action) {
 
             break;
         }
-        case GameActionTypes.RESET: {
-            next(action);
+        case GameActionTypes.PAUSE: {
+            timer.pause();
+            break;
+        }
+        case GameActionTypes.UNPAUSE: {
+            timer.resume();
             break;
         }
     }
 }
 
 function startTimer(store, next) {
-    timer = setTimeout(() => {
+    timer = new Timer(() => {
         --currentTime;
         if (currentTime > 0) {
             next({ type: GameActionTypes.SET_TURN_TIME, payload: { time: currentTime } });
@@ -74,7 +80,6 @@ function startTimer(store, next) {
             const coord = gameLogic.getRandomAvailableTurn(store.getState());
             store.dispatch(makeTurn(coord.x, coord.y));
         }
-
     }, 1000);
 }
 
@@ -82,6 +87,7 @@ function startTimer(store, next) {
 let socket;
 function networkProcess(store, next, action) {
     switch (action.type) {
+
         case GameActionTypes.CONNECT: {
             initSocket(next);
             next(action);
@@ -97,9 +103,12 @@ function networkProcess(store, next, action) {
             socket.emit(SocketCommands.GIVE_UP);
             break;
         }
-        case GameActionTypes.RESET: {
-            socket = null;
-            next(action);
+        case GameActionTypes.DISCONNECT: {
+            if (socket) {
+                socket.disconnect();
+                socket = null;
+            }
+
             break;
         }
     }
@@ -113,11 +122,11 @@ function initSocket(next) {
     });
     socket.on(SocketCommands.NEXT_TURN, (gameState) => {
         next({ type: GameActionTypes.SET_GAME_STATE, payload: gameState });
-    })
+    });
     socket.on(SocketCommands.TIME_TURN, (time) => {
         next({ type: GameActionTypes.SET_TURN_TIME, payload: { time: time } });
-    })
+    });
     socket.on(SocketCommands.END_GAME, (data) => {
         next({ type: GameActionTypes.END_GAME, payload: data });
-    })
+    });
 }

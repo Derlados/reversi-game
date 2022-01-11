@@ -11,9 +11,8 @@ import AlertModal from '../components/general/AlertModal';
 import Header from '../components/general/Header';
 import { useSelector, useDispatch } from 'react-redux';
 import { connect } from '../redux/actions/GameActions'
-import { makeTurn, turnTimeOut, giveUp } from '../redux/actions/GameActions';
+import { makeTurn, disconnect, giveUp, pause, unpause } from '../redux/actions/GameActions';
 import Screens from '../constants/Screens';
-
 
 export default function Game({ navigation }) {
     const isConnected = useSelector(state => state.isConnected);
@@ -21,24 +20,33 @@ export default function Game({ navigation }) {
     let backHandler;
     let alertModal = createRef();
 
-    if (Platform.OS == 'android') {
-        useEffect(() => {
-            if (isConnected) {
-                backHandler = BackHandler.addEventListener("hardwareBackPress", backHandle);
-            }
+    useEffect(() => {
+        if (Platform.OS == 'android') {
+            backHandler = BackHandler.addEventListener("hardwareBackPress", backHandle);
+        }
 
-            return () => {
-                if (isConnected) {
-                    backHandler.remove();
-                }
-
+        return () => {
+            if (Platform.OS == 'android') {
+                backHandler.remove();
             }
-        });
-    }
+        }
+    });
+
+    useEffect(() => {
+        return () => {
+            dispatch(disconnect());
+        }
+    }, []);
 
     const backHandle = () => {
-        alertModal.current.openModal();
-        return true;
+        if (isConnected) {
+            alertModal.current.openModal();
+            onPause();
+            return true;
+        } else {
+            dispatch(disconnect());
+            return false;
+        }
     }
 
     const onUserChoose = (x, y) => {
@@ -47,10 +55,15 @@ export default function Game({ navigation }) {
 
     const backToHome = () => {
         navigation.navigate(Screens.MENU);
+        dispatch(disconnect());
     }
 
     const unPause = () => {
+        dispatch(unpause());
+    }
 
+    const onPause = () => {
+        dispatch(pause());
     }
 
     const onGiveUp = () => {
@@ -67,11 +80,11 @@ export default function Game({ navigation }) {
                     title="Are you sure you want to leave ?"
                     positiveButton={{ label: 'Yes', onPress: backToHome }}
                     negativeButton={{ label: 'No', onPress: unPause }} />
-                <Header buttonList={[{ label: "Give up", onPress: onGiveUp }]} />
+                <Header onMenuOpen={onPause} onResume={unPause} buttonList={[{ label: "Give up", onPress: onGiveUp }]} />
                 <View style={styles.gameContainer}>
                     <PlayerRow />
                     <Field onUserChoose={onUserChoose} />
-                    <GameTimer seconds={5} />
+                    <GameTimer seconds={60} />
                 </View>
             </ImageBackground>
         );

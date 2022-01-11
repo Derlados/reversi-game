@@ -21,6 +21,14 @@ export const giveUp = function () {
     return { type: GameActionTypes.GIVE_UP, payload: {} }
 }
 
-export const reset = function () {
-    return { type: GameActionTypes.RESET, payload: {} }
+export const disconnect = function () {
+    return { type: GameActionTypes.DISCONNECT, payload: {} }
+}
+
+export const pause = function () {
+    return { type: GameActionTypes.PAUSE, payload: {} }
+}
+
+export const unpause = function () {
+    return { type: GameActionTypes.UNPAUSE, payload: {} }
 }

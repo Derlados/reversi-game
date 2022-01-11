@@ -4,7 +4,7 @@ import { gameMiddleware } from '../middleware/GameMiddleware';
 import GameValues from '../../constants/GameValues';
 import GameModes from '../../constants/GameModes';
 
-const BASIC_FIELD_SIZE = 4;
+const BASIC_FIELD_SIZE = 8;
 
 const initialStore = {
     gameMode: -1,
@@ -41,7 +41,7 @@ function initField(fieldSize = BASIC_FIELD_SIZE) {
 const gameReducer = function (state = initialStore, action) {
     switch (action.type) {
         case GameActionTypes.SET_GAME_MODE: {
-            return { ...state, gameMode: action.payload.gameMode }
+            return { ...initialStore, gameMode: action.payload.gameMode }
         }
         case GameActionTypes.CONNECT: {
             const isConnected = state.gameMode == GameModes.MULTIPLAYER ? false : true;
@@ -79,9 +79,6 @@ const gameReducer = function (state = initialStore, action) {
                 countCheckersP1: lastGameState.countCheckersP1,
                 countCheckersP2: lastGameState.countCheckersP2
             }
-        }
-        case GameActionTypes.RESET: {
-            return initialStore;
         }
         default:
             return state;

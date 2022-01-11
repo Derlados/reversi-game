@@ -6,7 +6,7 @@ import Screens from '../constants/Screens'
 import Header from '../components/general/Header';
 import Logo from '../components/general/Logo';
 import { useDispatch } from 'react-redux';
-import { reset, setGameMode } from '../redux/actions/GameActions';
+import { setGameMode } from '../redux/actions/GameActions';
 import GameModes from '../constants/GameModes';
 
 
@@ -15,11 +15,8 @@ export default function Menu({ navigation }) {
 
     const startGame = (mode) => {
         navigation.navigate(Screens.GAME)
-        dispatch(reset());
         dispatch(setGameMode(mode));
     }
-
-
 
     return (
         <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.container}>

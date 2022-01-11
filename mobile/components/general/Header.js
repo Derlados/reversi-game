@@ -9,25 +9,26 @@ import Colors from '../../values/colors';
 /**
  * 
  * @param {object} props 
+ * @param {function} props.onMenuOpen
+ * @param {function} props.onResume
  * @param {object} props.navigation - навигация
  * @param {Array<{label: string, onPress: function}>} props.buttonList - список дополнительных кнопок 
  * @returns 
  */
-export default function Header({ buttonList = [] }) {
+export default function Header({ onMenuOpen, onResume, buttonList = [] }) {
     const [isVolume, setIsVolume] = useState(false);
     const [isRulesVisible, setIsRulesVisible] = useState(false);
     const [isMenuVisible, setIsMenuVisible] = useState(false);
 
     const resume = () => {
+        onResume();
         setIsMenuVisible(false);
     }
-
-
 
     return (
         <View style={styles.container}>
             {buttonList.length != 0 ?
-                <TouchableWithoutFeedback onPress={() => setIsMenuVisible(true)}>
+                <TouchableWithoutFeedback onPress={() => { setIsMenuVisible(true); onMenuOpen(); }}>
                     <Image style={styles.icon} source={require('../../assets/images/burger-bar.png')} />
                 </TouchableWithoutFeedback>
                 :

@@ -10,8 +10,8 @@ export default function Rules({ onClose }) {
     StatusBar.setTranslucent(true)
 
     return (
-        <ScrollView style={styles.container} >
-            <View style={styles.inner} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+            <View style={styles.inner} >
                 <Text style={[gStyle.boldText, styles.title]}>Game rules</Text>
                 <Text style={[gStyle.text, styles.description]}>Reversi is a two-player strategy game played on an 8x8 board using discs that are colored white on one side and black on the other. One player plays the discs black side up while his opponent plays the discs white side up.</Text>
 

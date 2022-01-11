@@ -82,6 +82,7 @@ export default class GameController {
         socket.on(SocketComands.DISCONNECT, () => {
             if (this.gameRooms.get(newRoomId).isWaiting) {
                 this.clearRoom(newRoomId);
+                console.log("disconnect");
             }
         })
     }

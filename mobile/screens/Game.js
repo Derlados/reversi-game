@@ -45,10 +45,6 @@ export default function Game({ navigation }) {
         dispatch(makeTurn(x, y));
     }
 
-    const onTimeOut = () => {
-        dispatch(turnTimeOut());
-    }
-
     const backToHome = () => {
         navigation.navigate(Screens.MENU);
     }
@@ -74,8 +70,8 @@ export default function Game({ navigation }) {
                 <Header buttonList={[{ label: "Give up", onPress: onGiveUp }]} />
                 <View style={styles.gameContainer}>
                     <PlayerRow />
-                    <Field fieldSize={8} onUserChoose={onUserChoose} />
-                    <GameTimer seconds={60} onTimeOut={onTimeOut} />
+                    <Field onUserChoose={onUserChoose} />
+                    <GameTimer seconds={5} />
                 </View>
             </ImageBackground>
         );

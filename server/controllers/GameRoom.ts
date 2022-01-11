@@ -16,13 +16,13 @@ import Player from "../types/Player";
       чьих фишек на доске выставлено больше, объявляется победителем. В случае равенства количества фишек засчитывается ничья.
  */
 export class GameRoom {
-    private static BASIC_SIZE_FIELD = 8;
+    private static BASIC_SIZE_FIELD = 4;
 
     private EMPTY = 0;
     private FIRST_PLAYER = 1;
     private SECOND_PLAYER = 2;
     private AVAILABLE_TURN = 3;
-    private TURN_TIME_SEC = 60;
+    private TURN_TIME_SEC = 5;
 
     private timer: NodeJS.Timer;
     private currentTime = this.TURN_TIME_SEC;
@@ -114,7 +114,6 @@ export class GameRoom {
         this.deleteRoom(this.roomId);
     }
 
-
     /**
      * Инициализация слушателей сокета игрока
      * @param player - игрок для которого настраивается сокет
@@ -157,6 +156,7 @@ export class GameRoom {
             const cell = this.getRandomAvailableTurn(player);
             this.turnProcess(cell, player);
         }, this.TURN_TIME_SEC * 1000);
+
 
         this.currentTime = this.TURN_TIME_SEC;
         clearTimeout(this.timer);
@@ -268,6 +268,7 @@ export class GameRoom {
         this.player2.socket.emit(SocketComands.NEXT_TURN, dataP2);
     }
 
+    //TODO SIDE-EFFECT, одновременно проверка и расстановка подсказок в player.field
     /**
      * Проверка есть ли доступный ход у игрока
      * @param player - игрок для которого ищутся возможные ходы
@@ -277,7 +278,7 @@ export class GameRoom {
         let hasAvailable = false;
 
         // Нахождение всех пустых ячеек
-        let emptyCheckers: Array<GameRoom.Cell> = new Array();
+        const emptyCheckers: Array<GameRoom.Cell> = new Array();
         for (let i = 0; i < this.field.length; ++i) {
             for (let j = 0; j < this.field.length; ++j) {
                 if (this.field[i][j] == this.EMPTY) {
@@ -288,7 +289,7 @@ export class GameRoom {
 
         // Проверка для всех восьми направлений для пустых ячеек
         for (const cell of emptyCheckers) {
-            let directionCells: Array<Array<GameRoom.Cell>> = this.getCellsFromEveryDirection(cell);
+            const directionCells: Array<Array<GameRoom.Cell>> = this.getCellsFromEveryDirection(cell);
 
             if (this.findRightDirectionCells(directionCells, player).length != 0) {
                 hasAvailable = true;

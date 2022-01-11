@@ -9,7 +9,7 @@ import GameValue from '../../constants/GameValues';
 
 const windowWidth = Dimensions.get('window').width;
 
-export default function Field({ fieldSize, onUserChoose }) {
+export default function Field({ onUserChoose }) {
     // Sound.setCategory('Playback');
     // const turnSound = new Sound(turn);
 
@@ -21,10 +21,9 @@ export default function Field({ fieldSize, onUserChoose }) {
         cells[i] = [];
     }
 
-
     useEffect(() => {
         for (let i = 0; i < field.length; i++) {
-            for (let j = 0; j < cells.length; j++) {
+            for (let j = 0; j < field.length; j++) {
                 if ((field[i][j] == GameValue.FIRST_PLAYER && lastField[i][j] == GameValue.SECOND_PLAYER)
                     || (field[i][j] == GameValue.SECOND_PLAYER && lastField[i][j] == GameValue.FIRST_PLAYER)) {
                     cells[i][j].startAnim();
@@ -34,9 +33,12 @@ export default function Field({ fieldSize, onUserChoose }) {
     });
 
     const checkUserChoice = (x, y) => {
-        if (field[x][y] == GameValue.AVAILABLE_TURN) {
-            onUserChoose(x, y);
-        }
+        setTimeout(() => {
+            if (field[x][y] == GameValue.AVAILABLE_TURN) {
+                onUserChoose(x, y);
+            }
+        }, 0);
+
     }
 
     const renderField = () => {

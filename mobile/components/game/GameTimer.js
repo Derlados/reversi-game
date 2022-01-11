@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import GameValues from '../../constants/GameValues';
 import { gStyle } from '../../values/styles';
 
-export default function GameTimer({ seconds, onTimeOut }) {
+export default function GameTimer({ seconds }) {
     const currentPlayer = useSelector(state => state.currentPlayer);
     let time = useSelector(state => state.serverTime);
 
@@ -18,7 +18,7 @@ export default function GameTimer({ seconds, onTimeOut }) {
     let checker;
 
     useEffect(() => {
-        if (currentPlayer != checker.getSide()) {
+        if (currentPlayer && currentPlayer != checker.getSide()) {
             checker.startAnim();
             time = '';
         }

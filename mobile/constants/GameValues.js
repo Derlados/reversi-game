@@ -8,4 +8,7 @@ export default class GameValues {
     static LOSE = 1;
     static DRAW = 2;
     static VICTORY_OPONENT_LEFT = 3;
+    static FIRST_PLAYER_WIN = 4;
+    static SECOND_PLAYER_WIN = 5;
+
 }

@@ -16,6 +16,9 @@ results.set(GameValues.VICTORY, "You win !");
 results.set(GameValues.LOSE, "You lose");
 results.set(GameValues.DRAW, "Draw");
 results.set(GameValues.VICTORY_OPONENT_LEFT, "You win. Your opponent has left the game");
+results.set(GameValues.FIRST_PLAYER_WIN, "First player win !");
+results.set(GameValues.SECOND_PLAYER_WIN, "Second player win !");
+
 
 export default function ResultModal({ onAccept }) {
     const result = useSelector(state => state.result);
@@ -96,10 +99,10 @@ const styles = StyleSheet.create({
         color: Colors.secondaryGreen,
         fontWeight: 'bold',
         textAlign: 'center',
-        margin: 10
+        margin: 5
     },
     smallText: {
-        fontSize: 24,
+        fontSize: 20,
     },
     checkersCounter: {
         borderRadius: 1000,

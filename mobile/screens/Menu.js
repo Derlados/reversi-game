@@ -6,15 +6,17 @@ import Screens from '../constants/Screens'
 import Header from '../components/general/Header';
 import Logo from '../components/general/Logo';
 import { useDispatch } from 'react-redux';
-import { reset } from '../redux/actions/GameActions';
+import { reset, setGameMode } from '../redux/actions/GameActions';
+import GameModes from '../constants/GameModes';
 
 
 export default function Menu({ navigation }) {
     const dispatch = useDispatch();
 
-    const startGame = () => {
+    const startGame = (mode) => {
         navigation.navigate(Screens.GAME)
         dispatch(reset());
+        dispatch(setGameMode(mode));
     }
 
 
@@ -26,9 +28,9 @@ export default function Menu({ navigation }) {
             </View>
             <Logo />
             <View style={styles.buttonsColumn}>
-                <AnimatedButton style={styles.button} text="Multiplayer" initDelay={200} onPress={startGame} />
+                <AnimatedButton style={styles.button} text="Multiplayer" initDelay={200} onPress={() => startGame(GameModes.MULTIPLAYER)} />
                 <AnimatedButton style={styles.button} text="Player vs AI" initDelay={400} />
-                <AnimatedButton style={styles.button} text="Player vs Player" initDelay={600} />
+                <AnimatedButton style={styles.button} text="Player vs Player" initDelay={600} onPress={() => startGame(GameModes.PLAYER_VS_PLAYER)} />
             </View>
 
         </ImageBackground>

@@ -1,6 +1,6 @@
 import GameActionTypes from '../actions/GameActionTypes';
 import { createStore, applyMiddleware } from 'redux';
-import { gameMiddleware } from '../middleware/GameMiddleware';
+import dynamicMiddlewares from 'redux-dynamic-middlewares'
 import GameValues from '../../constants/GameValues';
 import GameModes from '../../constants/GameModes';
 
@@ -85,4 +85,4 @@ const gameReducer = function (state = initialStore, action) {
     }
 }
 
-export const store = createStore(gameReducer, applyMiddleware(gameMiddleware));
+export const store = createStore(gameReducer, applyMiddleware(dynamicMiddlewares));

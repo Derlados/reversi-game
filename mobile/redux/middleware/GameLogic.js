@@ -1,6 +1,5 @@
 import GameValues from "../../constants/GameValues";
 
-
 /**
  * ПРАВИЛА ИГРЫ. В начале игры в центр доски выставляются 4 фишки: чёрные на d5 и e4, белые на d4 и e5.
     - Первый ход делают чёрные. Далее игроки ходят по очереди.
@@ -54,7 +53,7 @@ export class GameLogic {
 
         // Изменение доски в соответствии с выбором
         const directionCells = this.getCellsFromEveryDirection(playerTurn);
-        const cellsToFlip = this.findRightDirectionCells(directionCells, state.currentPlayer);
+        const cellsToFlip = this.getCellsToFlip(directionCells, state.currentPlayer);
 
         for (const cells of cellsToFlip) {
             for (let i = 0; i < cells.length; ++i) {
@@ -78,7 +77,6 @@ export class GameLogic {
                 }
             }
         }
-
 
         return turns[Math.floor(Math.random() * turns.length)];
     }
@@ -177,7 +175,7 @@ export class GameLogic {
         for (const cell of emptyCells) {
             const directionCells = this.getCellsFromEveryDirection(cell);
 
-            if (this.findRightDirectionCells(directionCells, player.number).length != 0) {
+            if (this.getCellsToFlip(directionCells, player.number).length != 0) {
                 hasAvailable = true;
                 player.field[cell.x][cell.y] = GameValues.AVAILABLE_TURN;
             }
@@ -250,9 +248,9 @@ export class GameLogic {
      * Проверка всех направлений для пустой ячейки, на то возможно ли сделать хол
      * @param {Array<Array<number>>} directionCells - список ячеек которые находятся на восьми направлениях относительно проверяемой
      * @param {number} player - игрок для которого проверяется возможный ход
-     * @returns true - ход возможнен false - ход невозможен
+     * @returns массив фишек, которые будут перевернуты
      */
-    findRightDirectionCells(directionCells, player) {
+    getCellsToFlip(directionCells, player) {
         const rightDirectionCells = new Array();
         const oponnentNumber = player == GameValues.FIRST_PLAYER ? GameValues.SECOND_PLAYER : GameValues.FIRST_PLAYER;
 
@@ -275,7 +273,7 @@ export class GameLogic {
     }
 }
 
-class Cell {
+export class Cell {
     constructor(x, y, value) {
         this.x = x;
         this.y = y;

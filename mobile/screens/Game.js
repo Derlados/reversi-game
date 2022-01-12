@@ -13,8 +13,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { connect } from '../redux/actions/GameActions'
 import { makeTurn, disconnect, giveUp, pause, unpause } from '../redux/actions/GameActions';
 import Screens from '../constants/Screens';
+import GameValues from '../constants/GameValues';
+import GameModes from '../constants/GameModes';
 
 export default function Game({ navigation }) {
+    const gameMode = useSelector(state => state.gameMode);
     const isConnected = useSelector(state => state.isConnected);
     const dispatch = useDispatch();
     let backHandler;
@@ -80,7 +83,7 @@ export default function Game({ navigation }) {
                     title="Are you sure you want to leave ?"
                     positiveButton={{ label: 'Yes', onPress: backToHome }}
                     negativeButton={{ label: 'No', onPress: unPause }} />
-                <Header onMenuOpen={onPause} onResume={unPause} buttonList={[{ label: "Give up", onPress: onGiveUp }]} />
+                <Header onMenuOpen={onPause} onResume={unPause} buttonList={[gameMode == GameModes.MULTIPLAYER ? { label: "Give up", onPress: onGiveUp } : { label: "Back to home", onPress: backToHome }]} />
                 <View style={styles.gameContainer}>
                     <PlayerRow />
                     <Field onUserChoose={onUserChoose} />

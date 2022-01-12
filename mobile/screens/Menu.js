@@ -8,14 +8,24 @@ import Logo from '../components/general/Logo';
 import { useDispatch } from 'react-redux';
 import { setGameMode } from '../redux/actions/GameActions';
 import GameModes from '../constants/GameModes';
-
+import { addMiddleware, resetMiddlewares } from 'redux-dynamic-middlewares';
+import { localGameMiddleware } from '../redux/middleware/LocalGameMiddleware';
+import { netGameMiddleware } from '../redux/middleware/NetGameMiddleware';
 
 export default function Menu({ navigation }) {
     const dispatch = useDispatch();
 
     const startGame = (mode) => {
-        navigation.navigate(Screens.GAME)
+        resetMiddlewares();
+
+        if (mode == GameModes.MULTIPLAYER) {
+            addMiddleware(netGameMiddleware);
+        } else {
+            addMiddleware(localGameMiddleware);
+        }
+
         dispatch(setGameMode(mode));
+        navigation.navigate(Screens.GAME)
     }
 
     return (
@@ -26,7 +36,7 @@ export default function Menu({ navigation }) {
             <Logo />
             <View style={styles.buttonsColumn}>
                 <AnimatedButton style={styles.button} text="Multiplayer" initDelay={200} onPress={() => startGame(GameModes.MULTIPLAYER)} />
-                <AnimatedButton style={styles.button} text="Player vs AI" initDelay={400} />
+                <AnimatedButton style={styles.button} text="Player vs AI" initDelay={400} onPress={() => startGame(GameModes.PLAYER_VS_AI)} />
                 <AnimatedButton style={styles.button} text="Player vs Player" initDelay={600} onPress={() => startGame(GameModes.PLAYER_VS_PLAYER)} />
             </View>
 

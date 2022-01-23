@@ -13,15 +13,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { connect } from '../redux/actions/GameActions'
 import { makeTurn, disconnect, giveUp, pause, unpause } from '../redux/actions/GameActions';
 import Screens from '../constants/Screens';
-import GameValues from '../constants/GameValues';
 import GameModes from '../constants/GameModes';
 
 export default function Game({ navigation }) {
+    console.log("render");
     const gameMode = useSelector(state => state.gameMode);
     const isConnected = useSelector(state => state.isConnected);
     const dispatch = useDispatch();
     let backHandler;
     let alertModal = createRef();
+
+
 
     useEffect(() => {
         if (Platform.OS == 'android') {
@@ -106,8 +108,8 @@ export default function Game({ navigation }) {
 
         );
     }
-
 }
+
 const styles = StyleSheet.create({
     screensaver: {
         flex: 1,

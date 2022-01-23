@@ -8,23 +8,25 @@ const windowHeight = Dimensions.get('window').height;
 import { useSelector } from 'react-redux';
 
 export default function PlayerRow() {
-    const playerNames = useSelector(state => [state.player1Name, state.player2Name]);
-    const countCheckers = useSelector(state => [state.countCheckersP1, state.countCheckersP2]);
+    const player1Name = useSelector(state => state.player1Name);
+    const player2Name = useSelector(state => state.player2Name);
+    const countCheckersP1 = useSelector(state => state.countCheckersP1);
+    const countCheckersP2 = useSelector(state => state.countCheckersP2);
 
     return (
         <View style={styles.container}>
             <View style={styles.playerContainer}>
-                <Text style={[styles.text, styles.playerName]}>{playerNames[0]}</Text>
+                <Text style={[styles.text, styles.playerName]}>{player1Name}</Text>
                 <View style={[styles.checkersCounter, { backgroundColor: 'black' }]}>
-                    <Text style={styles.text}>{countCheckers[0]}</Text>
+                    <Text style={styles.text}>{countCheckersP1}</Text>
                 </View>
             </View>
             <Text style={styles.text}>VS</Text>
             <View style={styles.playerContainer}>
                 <View style={[styles.checkersCounter, { backgroundColor: 'white' }]}>
-                    <Text style={[styles.text, { color: 'black' }]}>{countCheckers[1]}</Text>
+                    <Text style={[styles.text, { color: 'black' }]}>{countCheckersP2}</Text>
                 </View>
-                <Text style={[styles.text, styles.playerName]}>{playerNames[1]}</Text>
+                <Text style={[styles.text, styles.playerName]}>{player2Name}</Text>
             </View>
         </View>
     );

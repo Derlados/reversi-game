@@ -12,7 +12,7 @@ export const netGameMiddleware = (store) => (next) => (action) => {
             break;
         }
         case GameActionTypes.CONNECT: {
-            initSocket(next);
+            initSocket(store.getState().user.username, next);
             next(action);
             break;
         }
@@ -34,14 +34,17 @@ export const netGameMiddleware = (store) => (next) => (action) => {
 
             break;
         }
+        default: {
+            next(action);
+        }
     }
 }
 
-function initSocket(next) {
-    socket = io(HOST, { transports: ['websocket'] });
+function initSocket(username, next) {
+    socket = io(HOST, { transports: ['websocket'], query: `username=${username}` });
 
-    socket.on(SocketCommands.START, (roomId) => {
-        next({ type: GameActionTypes.SET_CONNECTION, payload: { roomId: roomId } });
+    socket.on(SocketCommands.START, ({ roomId, username1, username2 }) => {
+        next({ type: GameActionTypes.SET_CONNECTION, payload: { roomId: roomId, username1: username1, username2: username2 } });
     });
     socket.on(SocketCommands.NEXT_TURN, (gameState) => {
         next({ type: GameActionTypes.SET_GAME_STATE, payload: gameState });

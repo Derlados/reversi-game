@@ -56,7 +56,7 @@ export default function ResultModal({ onAccept }) {
     }
 
     return (
-        <Modal transparent={true} visible={modalVisible} >
+        <Modal transparent={true} visible={modalVisible} statusBarTranslucent>
             <View style={styles.container}>
                 <Animated.View style={[styles.modalContainer, { opacity: opacityVal, transform: [{ translateY: topInterpolate }], }]}>
                     <Text style={styles.text}>{results.get(result)}</Text>

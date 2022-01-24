@@ -40,7 +40,7 @@ export class GameRoom {
         this.roomId = roomId;
         this.deleteRoom = deleteRoom;
         this.currentUserId = '';
-        this.player1 = new Player(player1, this.FIRST_PLAYER);
+        this.player1 = new Player(player1.handshake.query.username as string, player1, this.FIRST_PLAYER);
 
         this.field = new Array<Array<number>>(fieldSize);
         for (var i = 0; i < fieldSize; ++i) {
@@ -50,7 +50,6 @@ export class GameRoom {
             }
         }
 
-
         this.field[fieldSize / 2 - 1][fieldSize / 2] = this.SECOND_PLAYER;
         this.field[fieldSize / 2][fieldSize / 2 - 1] = this.SECOND_PLAYER;
         this.field[fieldSize / 2 - 1][fieldSize / 2 - 1] = this.FIRST_PLAYER;
@@ -58,15 +57,15 @@ export class GameRoom {
     }
 
     public addSecondPlayer(player2: Socket) {
-        this.player2 = new Player(player2, this.SECOND_PLAYER);
+        this.player2 = new Player(player2.handshake.query.username as string, player2, this.SECOND_PLAYER);
         this.isWaiting = false;
     }
 
     public startGame(roomId: string) {
         this.initPlayerSocket(this.player1);
         this.initPlayerSocket(this.player2);
-        this.player1.socket.emit('start', { roomId: roomId });
-        this.player2.socket.emit('start', { roomId: roomId });
+        this.player1.socket.emit('start', { roomId: roomId, username1: this.player1.username, username2: this.player2.username });
+        this.player2.socket.emit('start', { roomId: roomId, username1: this.player1.username, username2: this.player2.username });
         this.gameAnalyze();
     }
 

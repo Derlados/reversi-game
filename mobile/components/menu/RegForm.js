@@ -5,30 +5,68 @@ import { Dimensions } from 'react-native';
 import { gStyle, modalStyle } from '../../values/styles';
 import Colors from '../../values/colors';
 import * as GoogleSignIn from 'expo-google-app-auth';
-import { registration } from '../../redux/actions/UserActions';
-import { useDispatch } from 'react-redux';
+import { login, registration } from '../../redux/actions/UserActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
 
-export default function RegForm({ close }) {
-    const [state, setState] = useState({ googleId: -1, username: '', opacity: 0, errors: {} });
+export default function RegForm({ registrationFinish }) {
+    const [state, setState] = useState({ googleId: -1, username: '', opacity: 0, errors: {}, errorIsShown: false });
+    const regError = useSelector(state => state.user.serverError);
+    const isRegistered = useSelector(state => state.user.isRegistered);
     const MIN_USERNAME_LENGTH = 3;
     const dispatch = useDispatch();
+
+    if (!state.errorIsShown) {
+        if (regError == "Not found") {
+            setState({ ...state, opacity: 1, errorIsShown: true });
+        } else if (regError == "Server error. Please try again later") {
+            ToastAndroid.show(regError, ToastAndroid.SHORT);
+            registrationFinish(false);
+        } else if (regError) {
+            ToastAndroid.show(regError, ToastAndroid.SHORT);
+            setState({ ...state, errorIsShown: true });
+        }
+    }
+
+    if (isRegistered) {
+        registrationFinish(true);
+    }
 
     useEffect(() => {
         signIn();
     }, []);
 
     const signIn = async () => {
-        try {
-            const { user } = await GoogleSignIn.logInAsync({
-                androidClientId: `27588302935-lvjp4rmrts0rl3p34qm00tuf7t56g8v8.apps.googleusercontent.com`,
-            });
-            setState({ ...state, googleId: user.id, opacity: 1 });
-        } catch ({ message }) {
-            ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
-        }
+        GoogleSignin.configure({
+            androidClientId: `27588302935-q57rh259ksd4vk247fos56fm1te8pe2n.apps.googleusercontent.com`,
+        });
+
+        GoogleSignin.hasPlayServices().then((hasPlayService) => {
+            if (hasPlayService) {
+                GoogleSignin.signIn().then((userInfo) => {
+                    dispatch(login(userInfo.user.id))
+                    setState({ ...state, googleId: userInfo.user.id });
+                }).catch((e) => {
+
+                })
+            }
+        }).catch((e) => {
+
+        })
+
+        // try {
+        //     const { user } = await GoogleSignIn.logInAsync({
+        //         androidClientId: `27588302935-lvjp4rmrts0rl3p34qm00tuf7t56g8v8.apps.googleusercontent.com`,
+        //     });
+        //     dispatch(login(user.id))
+        //     setState({ ...state, googleId: user.id });
+
+        // } catch ({ message }) {
+        //     ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
+        // }
     }
 
     const tryReg = () => {
@@ -39,9 +77,8 @@ export default function RegForm({ close }) {
             errors.username = "Username must be not empty and contain more then 3 characters";
             setState({ ...state, errors: errors });
         } else {
-            close();
             dispatch(registration(state.googleId, username))
-
+            setState({ ...state, errorIsShown: false });
         }
     }
 

@@ -9,22 +9,34 @@ import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 import { Provider } from 'react-redux';
 import { store } from './redux/reducers';
+import AsyncStorageLib from '@react-native-async-storage/async-storage';
+import { setUserData } from './redux/actions/UserActions';
 
 const Stack = createStackNavigator();
 
-const loadFonts = () => Font.loadAsync({
-  'Poppins-Black': require('./assets/fonts/Poppins-Black.ttf'),
-  'Poppins-SemiBold': require('./assets/fonts/Poppins-SemiBold.ttf')
-});
+const loadApp = async () => {
+  Font.loadAsync({
+    'Poppins-Black': require('./assets/fonts/Poppins-Black.ttf'),
+    'Poppins-SemiBold': require('./assets/fonts/Poppins-SemiBold.ttf')
+  });
+
+  await AsyncStorageLib.clear();
+  const googleId = await AsyncStorageLib.getItem("@googleId");
+  const username = await AsyncStorageLib.getItem("@username");
+  if (googleId && username) {
+    store.dispatch(setUserData(googleId, username));
+  }
+}
+
 
 export default function App() {
-  const [isLoadFont, setIsLoadFont] = useState(false);
+  const [isLoadApp, setIsLoadApp] = useState(false);
   useEffect(() => {
     StatusBar.setHidden(true);
     StatusBar.setBackgroundColor('#00000000');
   }, []);
 
-  if (isLoadFont) {
+  if (isLoadApp) {
     return (
       <Provider store={store}>
         <NavigationContainer>
@@ -45,8 +57,8 @@ export default function App() {
     );
   } else {
     return (
-      <AppLoading startAsync={loadFonts}
-        onFinish={() => setIsLoadFont(true)}
+      <AppLoading startAsync={loadApp}
+        onFinish={() => setIsLoadApp(true)}
         onError={console.warn} />
     );
 

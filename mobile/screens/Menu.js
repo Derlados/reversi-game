@@ -11,27 +11,19 @@ import GameModes from '../constants/GameModes';
 import { addMiddleware, resetMiddlewares } from 'redux-dynamic-middlewares';
 import { localGameMiddleware } from '../redux/middleware/LocalGameMiddleware';
 import { netGameMiddleware } from '../redux/middleware/NetGameMiddleware';
-
 import RegForm from '../components/menu/RegForm';
-import { registration } from '../redux/actions/UserActions';
 
-;
-// import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 export default function Menu({ navigation }) {
     const isAuthorized = useSelector(state => state.user.isAuthorized);
-    const isRegistered = useSelector(state => state.user.isRegistered);
-    const regError = useSelector(state => state.user.serverError);
+
     const [state, setState] = useState({ isLoaded: false, isRegVisible: false }); state
     const dispatch = useDispatch();
 
-    if (regError) {
-        ToastAndroid.show(regError, ToastAndroid.SHORT);
-    } else if (isRegistered) {
-        navigation.navigate(Screens.GAME);
-    }
-
-    const closeReg = () => {
+    const registrationFinish = (isSuccess) => {
+        if (isSuccess) {
+            navigation.navigate(Screens.GAME);
+        }
         setState({ isLoaded: true, isRegVisible: false });
     }
 
@@ -40,10 +32,10 @@ export default function Menu({ navigation }) {
         dispatch(setGameMode(mode));
 
         if (mode === GameModes.MULTIPLAYER) {
+            addMiddleware(netGameMiddleware);
             if (!isAuthorized) {
                 setState({ isLoaded: true, isRegVisible: true });
             } else {
-                addMiddleware(netGameMiddleware);
                 navigation.navigate(Screens.GAME)
             }
         } else {
@@ -52,30 +44,10 @@ export default function Menu({ navigation }) {
         }
     }
 
-
-
-    const signIn = async () => {
-        // GoogleSignin.configure({
-        //     androidClientId: `27588302935-q57rh259ksd4vk247fos56fm1te8pe2n.apps.googleusercontent.com`,
-        // });
-
-        // GoogleSignin.hasPlayServices().then((hasPlayService) => {
-        //     if (hasPlayService) {
-        //         GoogleSignin.signIn().then((userInfo) => {
-        //             ToastAndroid.show("user " + JSON.stringify(userInfo), ToastAndroid.SHORT);
-        //         }).catch((e) => {
-        //             console.log("ERROR IS: " + JSON.stringify(e));
-        //         })
-        //     }
-        // }).catch((e) => {
-        //     console.log("ERROR IS: " + JSON.stringify(e));
-        // })
-    }
-
     return (
         <ImageBackground source={require('../assets/images/background.png')} resizeMode="cover" style={styles.container}>
             <Modal visible={state.isRegVisible} transparent={true} statusBarTranslucent>
-                <RegForm close={closeReg} />
+                <RegForm registrationFinish={registrationFinish} />
             </Modal>
             <View style={styles.head}>
                 <Header hasMenu={false} />

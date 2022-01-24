@@ -75,6 +75,9 @@ export const localGameMiddleware = (store) => (next) => (action) => {
             timer.resume();
             break;
         }
+        default: {
+            next(action);
+        }
     }
 }
 

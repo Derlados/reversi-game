@@ -16,7 +16,7 @@ const AlertModal = forwardRef((/** @type {props}*/{ title, positiveButton, negat
     }));
 
     return (
-        <Modal transparent={true} visible={isVisible} >
+        <Modal transparent={true} visible={isVisible} statusBarTranslucent>
             <View style={modalStyle.container}>
                 <View style={modalStyle.modalContainer}>
                     <Text style={[modalStyle.text, styles.title]}>{title}</Text>

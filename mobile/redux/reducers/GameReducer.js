@@ -13,8 +13,8 @@ const initialStore = {
     lastField: initField(),
     currentPlayer: null,
     serverTime: 0,
-    player1Name: 'player 1',
-    player2Name: 'player 2',
+    username1: 'player 1',
+    username2: 'player 2',
     countCheckersP1: 2,
     countCheckersP2: 2,
     result: null,
@@ -47,7 +47,8 @@ export const gameReducer = function (state = initialStore, action) {
             return { ...state, isConnected: isConnected }
         }
         case GameActionTypes.SET_CONNECTION: {
-            return { ...state, roomId: action.payload.roomId, isConnected: true }
+            const { roomId, username1, username2 } = action.payload;
+            return { ...state, roomId: roomId, username1: username1, username2: username2, isConnected: true }
         }
         case GameActionTypes.SET_GAME_STATE: {
             const gameState = action.payload;

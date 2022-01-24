@@ -8,8 +8,8 @@ const windowHeight = Dimensions.get('window').height;
 import { useSelector } from 'react-redux';
 
 export default function PlayerRow() {
-    const player1Name = useSelector(state => state.game.player1Name);
-    const player2Name = useSelector(state => state.game.player2Name);
+    const player1Name = useSelector(state => state.game.username1);
+    const player2Name = useSelector(state => state.game.username2);
     const countCheckersP1 = useSelector(state => state.game.countCheckersP1);
     const countCheckersP2 = useSelector(state => state.game.countCheckersP2);
 

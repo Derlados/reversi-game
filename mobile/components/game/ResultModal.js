@@ -6,7 +6,7 @@ import { gStyle } from '../../values/styles';
 import Colors from '../../values/colors';
 import GameValues from '../../constants/GameValues';
 import { useSelector } from 'react-redux';
-import { store } from '../../redux/reducers/GameReducer';
+import { store } from '../../redux/reducers';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -21,8 +21,8 @@ results.set(GameValues.SECOND_PLAYER_WIN, "Second player win !");
 
 
 export default function ResultModal({ onAccept }) {
-    const result = useSelector(state => state.result);
-    const countCheckers = [store.getState().countCheckersP1, store.getState().countCheckersP2];
+    const result = useSelector(state => state.game.result);
+    const countCheckers = [store.getState().game.countCheckersP1, store.getState().game.countCheckersP2];
     const [modalVisible, setModalVisible] = useState(false);
 
     const opacityVal = new Animated.Value(0.2);

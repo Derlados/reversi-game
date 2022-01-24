@@ -13,8 +13,8 @@ export default function Field({ onUserChoose }) {
     // Sound.setCategory('Playback');
     // const turnSound = new Sound(turn);
 
-    const field = useSelector(state => state.field)
-    const lastField = useSelector(state => state.lastField);
+    const field = useSelector(state => state.game.field)
+    const lastField = useSelector(state => state.game.lastField);
 
     const cells = [];
     for (let i = 0; i < field.length; i++) {

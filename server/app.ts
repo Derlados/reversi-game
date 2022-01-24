@@ -1,32 +1,29 @@
 import express from "express";
 import http from "http";
 import cors from "cors";
-import fileUpload from "express-fileupload";
 import dotenv from 'dotenv';
 import GameController from './controllers/GameController';
+import mongoose from "mongoose";
+import userRouter from "./routers/UserRouter";
+
 dotenv.config();
-
-export const imageRoot = __dirname + '/images';
-
-// Инициализация сервера и сокета
 const PORT = process.env.PORT || 3000;
 const app = express();
-const server = http.createServer(app);
-GameController.getGameController().init(server);
-
-app.get('/', function (req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
 
 app.use(cors())
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(express.static(__dirname));
-app.use(fileUpload());
+app.use('/api', userRouter);
 
-app.use(express.static('/images'));
+async function start() {
+    mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+    const server = http.createServer(app);
+    GameController.init(server);
+
+    server.listen(PORT, () => {
+        console.log("START");
+    });
+}
+start();
 
 
-server.listen(PORT, () => {
-    console.log("START");
-});

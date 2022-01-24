@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, StatusBar } from 'react-native';
+import { StyleSheet, StatusBar, ToastAndroid, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Screens from './constants/Screens';
 import Game from './screens/Game';
 import Menu from './screens/Menu';
-import MenuBottomTabs from './navigation/MenuBottomTabs';
 import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
-import { store } from './redux/reducers/GameReducer';
 import { Provider } from 'react-redux';
+import { store } from './redux/reducers';
 
 const Stack = createStackNavigator();
 
@@ -23,7 +22,7 @@ export default function App() {
   useEffect(() => {
     StatusBar.setHidden(true);
     StatusBar.setBackgroundColor('#00000000');
-  });
+  }, []);
 
   if (isLoadFont) {
     return (

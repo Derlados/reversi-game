@@ -7,8 +7,8 @@ import GameValues from '../../constants/GameValues';
 import { gStyle } from '../../values/styles';
 
 export default function GameTimer({ seconds }) {
-    const currentPlayer = useSelector(state => state.currentPlayer);
-    let time = useSelector(state => state.serverTime);
+    const currentPlayer = useSelector(state => state.game.currentPlayer);
+    let time = useSelector(state => state.game.serverTime);
 
     const flexVal = new Animated.Value(time);
     const flexInterpolate = flexVal.interpolate({

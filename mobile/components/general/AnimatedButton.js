@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, Animated, Easing, TouchableWithoutFeedback } fr
 import { LinearGradient } from 'expo-linear-gradient';
 import { gradients } from '../../values/gradients';
 
-export default function MenuButton({ style = {}, text, onPress, initDelay = 0, initAnimate = true }) {
+export default function AnimatedButton({ style = {}, text, onPress, initDelay = 0, initAnimate = true }) {
     const widthAnimVal = new Animated.Value(0);
     const widthInterpolate = widthAnimVal.interpolate({
         inputRange: [0, 1],

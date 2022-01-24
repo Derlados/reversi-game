@@ -1,6 +1,5 @@
 import GameActionTypes from '../actions/GameActionTypes';
-import { createStore, applyMiddleware } from 'redux';
-import dynamicMiddlewares from 'redux-dynamic-middlewares'
+
 import GameValues from '../../constants/GameValues';
 import GameModes from '../../constants/GameModes';
 
@@ -38,7 +37,7 @@ function initField(fieldSize = BASIC_FIELD_SIZE) {
     return field;
 }
 
-const gameReducer = function (state = initialStore, action) {
+export const gameReducer = function (state = initialStore, action) {
     switch (action.type) {
         case GameActionTypes.SET_GAME_MODE: {
             return { ...initialStore, gameMode: action.payload.gameMode }
@@ -85,4 +84,3 @@ const gameReducer = function (state = initialStore, action) {
     }
 }
 
-export const store = createStore(gameReducer, applyMiddleware(dynamicMiddlewares));

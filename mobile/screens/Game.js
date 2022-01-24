@@ -16,14 +16,11 @@ import Screens from '../constants/Screens';
 import GameModes from '../constants/GameModes';
 
 export default function Game({ navigation }) {
-    console.log("render");
-    const gameMode = useSelector(state => state.gameMode);
-    const isConnected = useSelector(state => state.isConnected);
+    const gameMode = useSelector(state => state.game.gameMode);
+    const isConnected = useSelector(state => state.game.isConnected);
     const dispatch = useDispatch();
     let backHandler;
     let alertModal = createRef();
-
-
 
     useEffect(() => {
         if (Platform.OS == 'android') {

@@ -4,21 +4,12 @@ import * as crypto from "crypto";
 import SocketComands from "../constants/SocketComands";
 import { GameRoom } from "./GameRoom";
 
-export default class GameController {
-    private static instance: GameController;
+class GameController {
     private io: Server;
     private gameRooms: Map<string, GameRoom>;
 
-    private constructor() {
+    constructor() {
         this.gameRooms = new Map<string, GameRoom>();
-    }
-
-    /**
-     * Реализация Singleton
-     * @returns instance объекта
-     */
-    public static getGameController() {
-        return this.instance || (this.instance = new this());
     }
 
     /**
@@ -88,3 +79,4 @@ export default class GameController {
     }
 }
 
+export default new GameController();

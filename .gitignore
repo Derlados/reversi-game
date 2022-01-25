@@ -1,5 +1,6 @@
 node_modules/
 heroku_server/
+build/
 .expo/
 dist/
 npm-debug.*

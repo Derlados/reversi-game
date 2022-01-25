@@ -5,6 +5,7 @@ import AnimatedButton from './AnimatedButton';
 import { gStyle, modalStyle } from '../../values/styles';
 import Rules from '../../screens/Rules';
 import Colors from '../../values/colors';
+import { useSelector } from 'react-redux';
 
 /**
  * 
@@ -19,6 +20,7 @@ export default function Header({ onMenuOpen, onResume, buttonList = [] }) {
     const [isVolume, setIsVolume] = useState(false);
     const [isRulesVisible, setIsRulesVisible] = useState(false);
     const [isMenuVisible, setIsMenuVisible] = useState(false);
+    const username = useSelector(state => state.user.username);
 
     const resume = () => {
         onResume();
@@ -32,7 +34,9 @@ export default function Header({ onMenuOpen, onResume, buttonList = [] }) {
                     <Image style={styles.icon} source={require('../../assets/images/burger-bar.png')} />
                 </TouchableWithoutFeedback>
                 :
-                <View></View>
+                <View>
+                    <Text style={styles.username}>{`User: ${username}`}</Text>
+                </View>
             }
             <Modal transparent={true} visible={isMenuVisible} statusBarTranslucent >
                 <View style={modalStyle.container}>
@@ -69,6 +73,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '100%',
         padding: 10
+    },
+    username: {
+        color: Colors.secondaryGreen,
+        fontSize: 20,
+        fontWeight: 'bold'
     },
     icon: {
         height: 30,

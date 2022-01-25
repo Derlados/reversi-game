@@ -69,7 +69,7 @@ export default function ResultModal({ onAccept }) {
                             <Text style={[styles.text, styles.smallText, { color: 'black' }]}>{countCheckers[1]}</Text>
                         </View>
                     </View>
-                    <AnimatedButton style={styles.button} text="Back to home" onPress={() => { onAccept(); setModalVisible(false); }} />
+                    <AnimatedButton style={styles.button} text="Back to home" onPress={() => { setModalVisible(false); onAccept(); }} />
                 </Animated.View>
             </View>
         </Modal>

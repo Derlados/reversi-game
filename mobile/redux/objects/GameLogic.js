@@ -143,6 +143,9 @@ export class GameLogic {
         } else if (!state.currentPlayer) {
             nextPlayer = GameValues.FIRST_PLAYER;
             nextField = this.player1.field;
+        } else {
+            nextPlayer = state.currentPlayer;
+            nextField = state.currentPlayer == GameValues.FIRST_PLAYER ? this.player1.field : this.player2.field;
         }
 
         return {

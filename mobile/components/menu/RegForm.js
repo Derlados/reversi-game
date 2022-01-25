@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, TouchableWithoutFeedback, ToastAndroid } from 'react-native';
-import AnimatedButton from '../general/AnimatedButton';
+import { StyleSheet, Text, View, TextInput, TouchableWithoutFeedback, ToastAndroid } from 'react-native';
 import { Dimensions } from 'react-native';
 import { gStyle, modalStyle } from '../../values/styles';
 import Colors from '../../values/colors';
-import * as GoogleSignIn from 'expo-google-app-auth';
 import { login, registration } from '../../redux/actions/UserActions';
 import { useDispatch, useSelector } from 'react-redux';
 import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
@@ -17,6 +15,7 @@ export default function RegForm({ registrationFinish }) {
     const regError = useSelector(state => state.user.serverError);
     const isRegistered = useSelector(state => state.user.isRegistered);
     const MIN_USERNAME_LENGTH = 3;
+    const MAX_USERNAME_LENGTH = 16;
     const dispatch = useDispatch();
 
     if (!state.errorIsShown) {
@@ -50,23 +49,14 @@ export default function RegForm({ registrationFinish }) {
                     dispatch(login(userInfo.user.id))
                     setState({ ...state, googleId: userInfo.user.id });
                 }).catch((e) => {
-
+                    ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
+                    registrationFinish(false);
                 })
             }
         }).catch((e) => {
-
+            ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
+            registrationFinish(false);
         })
-
-        // try {
-        //     const { user } = await GoogleSignIn.logInAsync({
-        //         androidClientId: `27588302935-lvjp4rmrts0rl3p34qm00tuf7t56g8v8.apps.googleusercontent.com`,
-        //     });
-        //     dispatch(login(user.id))
-        //     setState({ ...state, googleId: user.id });
-
-        // } catch ({ message }) {
-        //     ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
-        // }
     }
 
     const tryReg = () => {
@@ -87,7 +77,7 @@ export default function RegForm({ registrationFinish }) {
             <View style={[modalStyle.modalContainer, { opacity: state.opacity }]}>
                 <TextInput
                     onFocus={() => { }}
-                    maxLength={10}
+                    maxLength={MAX_USERNAME_LENGTH}
                     style={[gStyle.text, styles.input]}
                     onChangeText={(username) => setState({ ...state, username: username })}
                     placeholder="Enter your nickname"

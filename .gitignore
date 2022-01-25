@@ -1,6 +1,5 @@
 node_modules/
 heroku_server/
-android/
 .expo/
 dist/
 npm-debug.*

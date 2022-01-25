@@ -71,16 +71,20 @@ export default class AI {
         this.initPriorityMap(field.length);
         this.setPriorities(gameLogic, field, playerNumber);
 
-        let turn = new Cell(-1, -1, -1);
+        // Поиск максимального приоритета
+        const maxPiority = Math.max(...this.priorityMap.map((arr) => Math.max(...arr)));
+
+        // Поиск всех максимальных приоритетов
+        const turns = Array();
         for (let i = 0; i < this.priorityMap.length; i++) {
             for (let j = 0; j < this.priorityMap[i].length; ++j) {
-                if (this.priorityMap[i][j] > turn.value) {
-                    turn = new Cell(i, j, this.priorityMap[i][j]);
+                if (this.priorityMap[i][j] == maxPiority) {
+                    turns.push(new Cell(i, j, this.priorityMap[i][j]));
                 }
             }
         }
 
-        return turn;
+        return turns[Math.floor(Math.random() * turns.length)];
     }
 
 }

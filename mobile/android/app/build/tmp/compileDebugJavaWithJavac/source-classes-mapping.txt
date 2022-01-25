@@ -1,0 +1,14 @@
+com/derlados/reversi/MainActivity.java
+ com.derlados.reversi.MainActivity
+com/derlados/reversi/ReactNativeFlipper.java
+ com.derlados.reversi.ReactNativeFlipper
+ com.derlados.reversi.ReactNativeFlipper$1
+ com.derlados.reversi.ReactNativeFlipper$2
+ com.derlados.reversi.ReactNativeFlipper$2$1
+com/derlados/reversi/MainApplication.java
+ com.derlados.reversi.MainApplication
+ com.derlados.reversi.MainApplication$1
+com/derlados/reversi/BuildConfig.java
+ com.derlados.reversi.BuildConfig
+com/facebook/react/PackageList.java
+ com.facebook.react.PackageList

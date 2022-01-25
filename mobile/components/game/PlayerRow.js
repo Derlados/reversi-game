@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
     },
     playerName: {
         alignItems: 'center',
-        fontSize: 20,
+        fontSize: 18,
     },
     checkersCounter: {
         borderRadius: 1000,

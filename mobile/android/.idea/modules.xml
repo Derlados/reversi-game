@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/reversi.iml" filepath="$PROJECT_DIR$/.idea/modules/reversi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/reversi.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/reversi.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1249382415/reversi.expo.iml" filepath="$PROJECT_DIR$/.idea/modules/-1249382415/reversi.expo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1802960268/reversi.expo-application.iml" filepath="$PROJECT_DIR$/.idea/modules/-1802960268/reversi.expo-application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/740081779/reversi.expo-constants.iml" filepath="$PROJECT_DIR$/.idea/modules/740081779/reversi.expo-constants.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/657371862/reversi.expo-error-recovery.iml" filepath="$PROJECT_DIR$/.idea/modules/657371862/reversi.expo-error-recovery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1962062020/reversi.expo-file-system.iml" filepath="$PROJECT_DIR$/.idea/modules/1962062020/reversi.expo-file-system.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/559782763/reversi.expo-font.iml" filepath="$PROJECT_DIR$/.idea/modules/559782763/reversi.expo-font.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1472461479/reversi.expo-keep-awake.iml" filepath="$PROJECT_DIR$/.idea/modules/-1472461479/reversi.expo-keep-awake.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1720555516/reversi.expo-linear-gradient.iml" filepath="$PROJECT_DIR$/.idea/modules/1720555516/reversi.expo-linear-gradient.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1117838527/reversi.expo-modules-core.iml" filepath="$PROJECT_DIR$/.idea/modules/-1117838527/reversi.expo-modules-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1486555318/reversi.expo-splash-screen.iml" filepath="$PROJECT_DIR$/.idea/modules/1486555318/reversi.expo-splash-screen.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1192916509/reversi.react-native-gesture-handler.iml" filepath="$PROJECT_DIR$/.idea/modules/1192916509/reversi.react-native-gesture-handler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-352209924/reversi.react-native-image-filter-kit.iml" filepath="$PROJECT_DIR$/.idea/modules/-352209924/reversi.react-native-image-filter-kit.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/287865670/reversi.react-native-safe-area-context.iml" filepath="$PROJECT_DIR$/.idea/modules/287865670/reversi.react-native-safe-area-context.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1021175074/reversi.react-native-screens.iml" filepath="$PROJECT_DIR$/.idea/modules/-1021175074/reversi.react-native-screens.iml" />
+    </modules>
+  </component>
+</project>

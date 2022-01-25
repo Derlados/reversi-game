@@ -40,7 +40,7 @@ export const localGameMiddleware = (store) => (next) => (action) => {
             const gameState = gameLogic.turnProcess(game, { x: x, y: y });
 
             if (!gameState.result) {
-                if (game.gameMode == GameModes.PLAYER_VS_AI && game.currentPlayer == GameValues.FIRST_PLAYER) {
+                if (game.gameMode == GameModes.PLAYER_VS_AI && gameState.currentPlayer == GameValues.SECOND_PLAYER) {
                     const aiField = gameState.field.map(arr => arr.slice());
 
                     // Очистка поля, так как ходит ИИ

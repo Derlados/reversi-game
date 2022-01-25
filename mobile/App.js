@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import { store } from './redux/reducers';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import { setUserData } from './redux/actions/UserActions';
+import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createStackNavigator();
 
@@ -20,7 +21,6 @@ const loadApp = async () => {
     'Poppins-SemiBold': require('./assets/fonts/Poppins-SemiBold.ttf')
   });
 
-  await AsyncStorageLib.clear();
   const googleId = await AsyncStorageLib.getItem("@googleId");
   const username = await AsyncStorageLib.getItem("@username");
   if (googleId && username) {
@@ -32,6 +32,7 @@ const loadApp = async () => {
 export default function App() {
   const [isLoadApp, setIsLoadApp] = useState(false);
   useEffect(() => {
+    SplashScreen.hide();
     StatusBar.setHidden(true);
     StatusBar.setBackgroundColor('#00000000');
   }, []);

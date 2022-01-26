@@ -11,7 +11,6 @@ import { Provider } from 'react-redux';
 import { store } from './redux/reducers';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import { setUserData } from './redux/actions/UserActions';
-import SplashScreen from 'react-native-splash-screen';
 
 const Stack = createStackNavigator();
 
@@ -32,7 +31,6 @@ const loadApp = async () => {
 export default function App() {
   const [isLoadApp, setIsLoadApp] = useState(false);
   useEffect(() => {
-    SplashScreen.hide();
     StatusBar.setHidden(true);
     StatusBar.setBackgroundColor('#00000000');
   }, []);

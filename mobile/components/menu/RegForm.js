@@ -5,7 +5,7 @@ import { gStyle, modalStyle } from '../../values/styles';
 import Colors from '../../values/colors';
 import { login, registration } from '../../redux/actions/UserActions';
 import { useDispatch, useSelector } from 'react-redux';
-import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
+// import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 
 export const windowWidth = Dimensions.get('window').width;
 export const windowHeight = Dimensions.get('window').height;
@@ -39,24 +39,24 @@ export default function RegForm({ registrationFinish }) {
     }, []);
 
     const signIn = async () => {
-        GoogleSignin.configure({
-            androidClientId: `27588302935-q57rh259ksd4vk247fos56fm1te8pe2n.apps.googleusercontent.com`,
-        });
+        // GoogleSignin.configure({
+        //     androidClientId: `27588302935-q57rh259ksd4vk247fos56fm1te8pe2n.apps.googleusercontent.com`,
+        // });
 
-        GoogleSignin.hasPlayServices().then((hasPlayService) => {
-            if (hasPlayService) {
-                GoogleSignin.signIn().then((userInfo) => {
-                    dispatch(login(userInfo.user.id))
-                    setState({ ...state, googleId: userInfo.user.id });
-                }).catch((e) => {
-                    ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
-                    registrationFinish(false);
-                })
-            }
-        }).catch((e) => {
-            ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
-            registrationFinish(false);
-        })
+        // GoogleSignin.hasPlayServices().then((hasPlayService) => {
+        //     if (hasPlayService) {
+        //         GoogleSignin.signIn().then((userInfo) => {
+        //             dispatch(login(userInfo.user.id))
+        //             setState({ ...state, googleId: userInfo.user.id });
+        //         }).catch((e) => {
+        //             ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
+        //             registrationFinish(false);
+        //         })
+        //     }
+        // }).catch((e) => {
+        //     ToastAndroid.show("Please sign in google to play in multiplayer mode", ToastAndroid.SHORT);
+        //     registrationFinish(false);
+        // })
     }
 
     const tryReg = () => {

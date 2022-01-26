@@ -35,7 +35,7 @@ export default function Header({ onMenuOpen, onResume, buttonList = [] }) {
                 </TouchableWithoutFeedback>
                 :
                 <View>
-                    <Text style={styles.username}>{`User: ${username}`}</Text>
+                    {username && <Text style={styles.username}>{`User: ${username}`}</Text>}
                 </View>
             }
             <Modal transparent={true} visible={isMenuVisible} statusBarTranslucent >

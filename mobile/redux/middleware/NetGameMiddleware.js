@@ -1,32 +1,32 @@
 import { io } from 'socket.io-client';
-import SocketCommands from '../../constants/SocketCommands';
+import SocketCommands from '../../constants/socket-commands';
 import { HOST } from '../../values/global';
-import GameActionTypes from '../actions/GameActionTypes';
+import { GameAction } from '../types/game';
 
 let socket;
 
 export const netGameMiddleware = (store) => (next) => (action) => {
     switch (action.type) {
-        case GameActionTypes.SET_GAME_MODE: {
+        case GameAction.SET_GAME_MODE: {
             next(action);
             break;
         }
-        case GameActionTypes.CONNECT: {
+        case GameAction.CONNECT: {
             initSocket(store.getState().user.username, next);
             next(action);
             break;
         }
-        case GameActionTypes.NEXT_TURN: {
+        case GameAction.NEXT_TURN: {
             const x = action.payload.x;
             const y = action.payload.y;
             socket.emit(SocketCommands.GAME_TURN, { x: x, y: y });
             break;
         }
-        case GameActionTypes.GIVE_UP: {
+        case GameAction.GIVE_UP: {
             socket.emit(SocketCommands.GIVE_UP);
             break;
         }
-        case GameActionTypes.DISCONNECT: {
+        case GameAction.DISCONNECT: {
             if (socket) {
                 socket.disconnect();
                 socket = null;
